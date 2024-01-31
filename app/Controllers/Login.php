@@ -2,15 +2,14 @@
 
 namespace App\Controllers;
 
-use App\Models\UserModel;
+use App\Models\UsuariosModel;
 
 class Login extends BaseController
 {
     public function index()
     {
         /*$seeder = \Config\Database::seeder();
-        $seeder->call('PermissionSeeder');
-        $seeder->call('UserSeeder');*/
+        $seeder->call('UsuariosSeeder');*/
         return view('login');
     }
 
@@ -18,44 +17,38 @@ class Login extends BaseController
     {
         helper('form');
 
-        $rules = [
-            'username' => ['required'],
-            'password' => ['required']
+        $reglas = [
+            'usuario'  => 'required',
+            'password' => ['label' => 'contraseña', 'rules' => 'required'],
         ];
 
-        if (!$this->request->is('post')) {
-            return view('login');
+        if (!$this->validate($reglas)) {
+            return view('login', ['errors' => $this->validator->getErrors()]);
         }
 
-        if (!$this->validate($rules)) {
-            $data = ['validation' => $this->validator];
-            return view('login', $data);
-        }
+        $usuarioModel = new UsuariosModel();
+        $post = $this->request->getPost(['usuario', 'password']);
 
-        $userModel = new UserModel();
+        $usuarioData = $usuarioModel->validaUsuario($post['usuario'], $post['password']);
 
-        $post = $this->request->getPost(['username', 'password']);
-        $query = $userModel->getWhere(['username' => $post['username'], 'active' => 1]);
-        $num_rows = $query->getNumRows();
-
-        if ($num_rows > 0) {
-            $row = $query->getFirstRow();
-            if (password_verify($post['password'], $row->password)) {
-                $sessionData = [
-                    'login' => 1,
-                    'userId' => $row->id,
-                    'displayName' => $row->display_name,
-                    'permission_id' => $row->permission_id
-                ];
-
-                $this->session->set($sessionData);
-                return redirect()->to(base_url() . '/home');
-            }
+        if ($usuarioData !== null) {
+            $this->configurarSesion($usuarioData);
+            return redirect()->to(base_url() . '/inicio');
         }
 
         $this->session->destroy();
-        $data['validation'] = $this->validator;
-        $data['errors']['error'] = lang('App.loginValidation');
-        return  view('login', $data);
+        $this->validator->setError('error', 'El usuario y/o contraseña son incorrectos.');
+        return view('login', ['errors' => $this->validator->getErrors()]);
+    }
+
+    private function configurarSesion($usuarioData)
+    {
+        $sesionData = [
+            'usuarioLogin'  => true,
+            'usuarioId'     => $usuarioData['id'],
+            'usuarioNombre' => $usuarioData['nombre'],
+        ];
+
+        $this->session->set($sesionData);
     }
 }

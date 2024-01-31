@@ -1,6 +1,6 @@
 <?php
 
-$this->extend('template/layout');
+$this->extend('plantilla/layout');
 $this->section('contentido');
 
 ?>
