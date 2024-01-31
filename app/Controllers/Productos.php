@@ -6,7 +6,6 @@ use App\Models\ProductosModel;
 
 class Productos extends BaseController
 {
-
     protected $productosModel;
 
     public function __construct()
