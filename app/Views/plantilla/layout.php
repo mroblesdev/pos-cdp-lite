@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
     <meta charset="utf-8" />
@@ -16,10 +16,10 @@
     <link href="<?= base_url('css/all.min.css'); ?>" rel="stylesheet" />
 
     <!-- Page level plugin CSS-->
-    <link href="<?= base_url('css/dataTables.bootstrap5.min.css'); ?>" rel="stylesheet">
+    <link href="<?= base_url('assets/datatables/datatables.min.css'); ?>" rel="stylesheet">
 
     <!-- Custom styles for this template-->
-    <link href="<?= base_url('js/jquery-ui/jquery-ui.min.css'); ?>" rel="stylesheet">
+    <link href="<?= base_url('assets/jquery-ui/jquery-ui.min.css'); ?>" rel="stylesheet">
 
 </head>
 
@@ -31,9 +31,11 @@
         <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
 
         <!-- Navbar-->
-        <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
+        <ul class="navbar-nav d-none d-md-inline-block ms-auto me-0 me-md-3 my-2 my-md-0">
             <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i> <?= $_SESSION['usuarioNombre']; ?></a>
+                <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-user fa-fw"></i> <?= $_SESSION['usuarioNombre']; ?>
+                </a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                     <li><a class="dropdown-item" href="#!">Cerrar sesión</a></li>
                 </ul>
@@ -66,13 +68,12 @@
     </div>
 
     <!-- Bootstrap core JavaScript-->
-    <script src="<?php echo base_url('js/bootstrap.bundle.min.js'); ?>" crossorigin="anonymous"></script>
+    <script src="<?= base_url('js/bootstrap.bundle.min.js'); ?>" crossorigin="anonymous"></script>
 
     <script src="<?= base_url('js/jquery.min.js'); ?>"></script>
-    <script src="<?= base_url('js/jquery-ui/jquery-ui.min.js'); ?>"></script>
-    <script src="<?php echo base_url('js/jquery.dataTables.min.js'); ?>"></script>
-    <script src="<?php echo base_url('js/dataTables.bootstrap5.min.js'); ?>"></script>
-    <script src="<?php echo base_url('js/scripts.js'); ?>"></script>
+    <script src="<?= base_url('assets/jquery-ui/jquery-ui.min.js'); ?>"></script>
+    <script src="<?= base_url('assets/datatables/datatables.min.js'); ?>"></script>
+    <script src="<?= base_url('js/scripts.js'); ?>"></script>
 
     <?php $this->renderSection('script'); ?>
 

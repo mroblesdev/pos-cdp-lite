@@ -72,7 +72,7 @@
         </div>
     </div>
 
-    <!--<script src="js/scripts.js"></script>-->
+    <script src="<?= base_url('js/bootstrap.bundle.min.js'); ?>"></script>
 </body>
 
 </html>
