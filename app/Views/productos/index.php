@@ -9,10 +9,10 @@ $this->section('contentido');
 
 <div class="centrado">
     <p>
-        <a href="<?php echo site_url('productos/new'); ?>" class="btn btn-primary btn-sm">
+        <a href="<?= base_url('productos/new'); ?>" class="btn btn-primary btn-sm">
             <i class="fas fa-plus me-1"></i> Nuevo
         </a>
-        <a href="<?php echo site_url('productos/baja'); ?>" class="btn btn-warning btn-sm">
+        <a href="<?= base_url('productos/baja'); ?>" class="btn btn-warning btn-sm">
             Eliminados
         </a>
     </p>

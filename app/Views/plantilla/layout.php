@@ -8,7 +8,7 @@
     <meta name="description" content="Sistema Punto de Venta CDP Lite" />
     <meta name="author" content="MRoblesDev" />
     <title>Sistema Punto de Venta CDP Lite v1.0</title>
-    <link rel="icon" href="<?php echo base_url('images/favicon.png'); ?>" sizes="32x32" />
+    <link rel="icon" href="<?= base_url('images/favicon.png'); ?>" sizes="32x32" />
 
     <!-- Carga template SB Admin -->
     <link href="<?= base_url('css/styles.css'); ?>" rel="stylesheet" />

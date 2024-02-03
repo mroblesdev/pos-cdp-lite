@@ -20,17 +20,17 @@ $this->section('contentido');
     <?= csrf_field(); ?>
 
     <div class="col-md-3">
-        <label for="codigo" class="form-label">Código de barras</label>
+        <label for="codigo" class="form-label"><span class="text-danger">*</span> Código de barras</label>
         <input type="text" class="form-control" id="codigo" name="codigo" value="<?= set_value('codigo'); ?>" required autofocus>
     </div>
 
     <div class="col-md-9">
-        <label for="nombre" class="form-label">Nombre</label>
-        <input type="nombre" class="form-control" id="nombre" name="nombre" value="<?= set_value('nombre'); ?>" required>
+        <label for="nombre" class="form-label"><span class="text-danger">*</span> Nombre</label>
+        <input type="text" class="form-control" id="nombre" name="nombre" value="<?= set_value('nombre'); ?>" required>
     </div>
 
     <div class="col-md-4">
-        <label for="precio" class="form-label">Precio</label>
+        <label for="precio" class="form-label"><span class="text-danger">*</span> Precio</label>
         <input type="text" class="form-control" id="precio" name="precio" value="<?= set_value('precio'); ?>" onkeypress="return validateDecimal(this.value);" required>
     </div>
 
@@ -42,14 +42,19 @@ $this->section('contentido');
         </select>
     </div>
 
-
     <div class="col-md-4">
         <label for="existencia" class="form-label">Existencia actual</label>
         <input type="text" class="form-control" id="existencia" name="existencia" value="<?= set_value('existencia'); ?>">
     </div>
 
     <div class="col-12">
-        <a href="<?php echo site_url('productos'); ?>" class="btn btn-secondary">Regresar</a>
+        <p class="fst-italic">
+            Campos marcados con asterisco (<span class="text-danger">*</span>) son obligatorios.
+        </p>
+    </div>
+
+    <div class="col-12">
+        <a href="<?= base_url('productos'); ?>" class="btn btn-secondary">Regresar</a>
         <button class="btn btn-success" type="submit">Guardar</button>
     </div>
 </form>

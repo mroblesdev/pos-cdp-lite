@@ -30,11 +30,11 @@
                                     <form action="<?= base_url('login'); ?>" method="post" autocomplete="off">
                                         <?= csrf_field(); ?>
                                         <div class="form-floating mb-3">
-                                            <input class="form-control" id="usuario" name="usuario" type="text" placeholder="Usuario" required1 autofocus />
+                                            <input class="form-control" id="usuario" name="usuario" type="text" placeholder="Usuario" required autofocus>
                                             <label for="usuario">Usuario</label>
                                         </div>
                                         <div class="form-floating mb-3">
-                                            <input class="form-control" id="password" name="password" type="password" placeholder="Contraseña" required1 />
+                                            <input class="form-control" id="password" name="password" type="password" placeholder="Contraseña" required>
                                             <label for="password">Contraseña</label>
                                         </div>
                                         <div class="d-flex align-items-center justify-content-end mt-4 mb-0">

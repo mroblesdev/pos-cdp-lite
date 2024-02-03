@@ -9,7 +9,7 @@ $this->section('contentido');
 
 <div class="centrado">
     <p>
-        <a href="<?php echo site_url('productos'); ?>" class="btn btn-primary btn-sm">
+        <a href="<?= base_url('productos'); ?>" class="btn btn-primary btn-sm">
             Productos
         </a>
     </p>
