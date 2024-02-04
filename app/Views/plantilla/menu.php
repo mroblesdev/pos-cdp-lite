@@ -7,6 +7,11 @@
                     Productos
                 </a>
 
+                <a class="nav-link" href="<?= base_url('/caja'); ?>">
+                    <div class="sb-nav-link-icon"><i class="fa-solid fa-cash-register"></i></div>
+                    Caja
+                </a>
+
                 <a class="nav-link" href="<?= base_url('/datos'); ?>">
                     <div class="sb-nav-link-icon"><i class="fa-solid fa-shop"></i></div>
                     Datos de la tienda

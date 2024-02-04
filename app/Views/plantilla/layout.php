@@ -21,6 +21,8 @@
     <!-- Custom styles for this template-->
     <link href="<?= base_url('assets/jquery-ui/jquery-ui.min.css'); ?>" rel="stylesheet">
 
+    <?php $this->renderSection('style'); ?>
+
 </head>
 
 <body class="sb-nav-fixed">
