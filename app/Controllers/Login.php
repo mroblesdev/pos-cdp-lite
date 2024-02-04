@@ -51,4 +51,13 @@ class Login extends BaseController
 
         $this->session->set($sesionData);
     }
+
+    public function logout()
+    {
+        if ($this->session->get('usuarioLogin')) {
+            $this->session->destroy();
+        }
+
+        return redirect()->to(base_url());
+    }
 }

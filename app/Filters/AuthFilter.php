@@ -13,7 +13,7 @@ class AuthFilter implements FilterInterface
         service('auth');
 
         if (!session()->get('usuarioLogin')) {
-            return redirect()->to(base_url());
+            return redirect()->to(base_url('login'));
         }
     }
 
