@@ -46,4 +46,12 @@ class ProductosModel extends Model
 
         return $query->getResultArray();
     }
+
+    // Actualiza existencia del producto
+    public function actualizaStock($idProducto, $cantidad, $operador = '+')
+    {
+        $this->where('id', $idProducto)
+            ->set('existencia', "existencia $operador $cantidad", false)
+            ->update();
+    }
 }

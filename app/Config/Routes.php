@@ -21,10 +21,12 @@ $routes->get('productos/baja', 'Productos::bajas', ["filter" => "auth"]);
 $routes->put('productos/activa/(:num)', 'Productos::reingresar/$1', ["filter" => "auth"]);
 $routes->get('productos/autocompleteData?(:any)', 'Productos::autocompleteData/$1', ["filter" => "auth"]);
 
-// Dashboard
-$routes->get('caja', 'Caja::index');
-$routes->post('caja/inserta', 'Caja::inserta');
-$routes->post('caja/elimina', 'Caja::elimina');
+// Caja
+$routes->get('caja', 'Caja::index', ["filter" => "auth"]);
+$routes->post('caja/inserta', 'Caja::inserta', ["filter" => "auth"]);
+$routes->post('caja/elimina', 'Caja::elimina', ["filter" => "auth"]);
+
+$routes->post('ventas', 'Ventas::guarda', ["filter" => "auth"]);
 
 // Configuración
 $routes->get('datos', 'Configuracion::edit', ["filter" => "auth"]);

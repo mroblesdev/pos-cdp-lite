@@ -33,7 +33,7 @@ class Caja extends BaseController
 
         $codigo   = $this->request->getPost('codigo');
         $cantidad = $this->request->getPost('cantidad');
-        $idVenta = $this->request->getPost('id_venta');
+        $idVenta  = $this->request->getPost('id_venta');
 
         $productosModel = new ProductosModel();
         $temporalModel = new TemporalCajaModel();
