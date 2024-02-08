@@ -16,10 +16,16 @@ use App\Models\ConfiguracionModel;
 use App\Models\DetalleVentasModel;
 use App\Models\ProductosModel;
 use App\Models\TemporalCajaModel;
-use App\Models\VentasModel;
+use App\ThirdParty\Fpdf\FPDF;
 
 class Ventas extends BaseController
 {
+    protected $ventasModel;
+
+    public function __construct()
+    {
+        $this->ventasModel = model('VentasModel');
+    }
     public function index()
     {
         return view('inicio');
@@ -30,7 +36,6 @@ class Ventas extends BaseController
 
         $temporalModel = new TemporalCajaModel();
         $configModel   = new ConfiguracionModel();
-        $ventasModel   = new VentasModel();
 
         $idVentaTmp = $this->request->getPost('id_venta');
 
@@ -42,7 +47,7 @@ class Ventas extends BaseController
             'activo' => 1
         ];
 
-        $idVenta = $ventasModel->insert($datos);
+        $idVenta = $this->ventasModel->insert($datos);
 
         if ($idVenta) {
             $configModel->siguienteFolio();
@@ -72,7 +77,98 @@ class Ventas extends BaseController
         }
 
         $temporalModel->eliminaVenta($idVentaTmp);
-        
-        //return redirect()->to(base_url() . "/ventas/muestraTicket/" . $idVenta);
+
+        return redirect()->to(base_url('ventas/muestraTicket/' . $idVenta));
+    }
+
+    public function verTicket($idVenta)
+    {
+        return view('ventas/ticket', ['idVenta' => $idVenta]);
+    }
+
+    public function generaTicket($idVenta)
+    {
+        $detalleVentasModel = new DetalleVentasModel();
+        $configuracionModel = new ConfiguracionModel();
+
+        $configuraciones = $configuracionModel->findAll();
+        $configuracionArray = [];
+
+        foreach ($configuraciones as $configuracion) {
+            $configuracionArray[$configuracion['nombre']] = $configuracion['valor'];
+        }
+
+        $datosVenta   = $this->ventasModel->find($idVenta);
+        $detalleVenta = $detalleVentasModel->where('venta_id', $idVenta)->findAll();
+
+        $pdf = new FPDF('P', 'mm', array(80, 250));
+        $pdf->AddPage();
+        $pdf->SetMargins(5, 5, 5);
+        $pdf->SetTitle("Ticket");
+        $pdf->SetFont('Arial', 'B', 9);
+
+        $fecha = substr($datosVenta['fecha'], 0, 10);
+        $hora = substr($datosVenta['fecha'], 11, 8);
+
+        $pdf->Multicell(60, 4, mb_convert_encoding($configuracionArray['tienda_nombre'], 'ISO-8859-1', 'UTF-8'), 0, 'C', 0);
+
+        $pdf->SetFont('Arial', '', 7);
+        $pdf->Multicell(70, 4, mb_convert_encoding($configuracionArray['tienda_direccion'], 'ISO-8859-1', 'UTF-8'), 0, 'C', 0);
+        $pdf->Multicell(70, 4, mb_convert_encoding($configuracionArray['tienda_telefono'], 'ISO-8859-1', 'UTF-8'), 0, 'C', 0);
+
+        $pdf->SetFont('Arial', '', 8);
+        $pdf->Ln();
+        $pdf->Cell(60, 4, mb_convert_encoding('Nº ticket:  ', 'ISO-8859-1', 'UTF-8') . $datosVenta['folio'], 0, 1, 'L');
+
+        $pdf->Cell(60, 4, '=========================================', 0, 1, 'L');
+
+        $pdf->Cell(7, 3, 'Cant.', 0, 0, 'L');
+        $pdf->Cell(36, 3, mb_convert_encoding('Descripción', 'ISO-8859-1', 'UTF-8'), 0, 0, 'L');
+        $pdf->Cell(14, 3, 'Precio', 0, 0, 'L');
+        $pdf->Cell(14, 3, 'Importe', 0, 1, 'L');
+        $pdf->Cell(70, 3, '------------------------------------------------------------------------', 0, 1, 'L');
+
+        $pdf->SetFont('Arial', '', 6.5);
+
+        foreach ($detalleVenta as $producto) {
+            $importe  = number_format(($producto['cantidad'] * $producto['precio']), 2, '.', ',');
+            $pdf->Cell(7, 3, $producto['cantidad'], 0, 0, 'C');
+            $y = $pdf->GetY();
+            $pdf->MultiCell(36, 3, mb_convert_encoding($producto['nombre'], 'ISO-8859-1', 'UTF-8'), 0, 'L');
+            $y2 = $pdf->GetY();
+            $pdf->SetXY(48, $y);
+            $pdf->Cell(14, 3, '$ ' . number_format($producto['precio'], 2, '.', ','), 0, 1, 'C');
+            $pdf->SetXY(62, $y);
+            $pdf->Cell(14, 3, '$ ' . $importe, 0, 1, 'C');
+            $pdf->SetY($y2);
+        }
+
+        $pdf->Ln();
+        $pdf->SetFont('Arial', 'B', 9);
+        $pdf->Cell(50, 4, 'Total', 0, 0, 'R');
+        $pdf->Cell(20, 4, '$ ' . number_format($datosVenta['total'], 2, '.', ','), 0, 1, 'R');
+
+        $pdf->Ln();
+        $pdf->SetFont('Arial', '', 8);
+        // $pdf->MultiCell(70, 4, 'Son ' . ucfirst(strtolower(NumeroALetras::convertir($datosVenta->total, 'pesos', 'centavos'))), 0, 'L', 0);
+
+        $pdf->Ln();
+        $pdf->Cell(10);
+        $pdf->Cell(30, 4, 'Fecha: ' . date("d/m/Y", strtotime($fecha)), 0, 0, 'L');
+        $pdf->Cell(30, 4, 'Hora: ' . $hora, 0, 1, 'L');
+
+        $pdf->Ln(3);
+        $pdf->SetFont('Arial', 'B', 8);
+        $pdf->Multicell(70, 4, mb_convert_encoding($configuracionArray['ticket_leyenda'], 'ISO-8859-1', 'UTF-8'), 0, 'C', 0);
+
+        if ($datosVenta['activo'] == 0) {
+            $pdf->SetTextColor(255, 0, 0,);
+            $pdf->SetFontSize(24);
+            $pdf->SetY(30);
+            $pdf->Cell(0, 5, 'Venta cancelada', 0, 0, 'C');
+        }
+
+        $this->response->setHeader('Content-Type', 'application/pdf');
+        $pdf->Output("Ticket.pdf", 'I');
     }
 }

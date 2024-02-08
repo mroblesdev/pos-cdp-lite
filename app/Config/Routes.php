@@ -27,6 +27,8 @@ $routes->post('caja/inserta', 'Caja::inserta', ["filter" => "auth"]);
 $routes->post('caja/elimina', 'Caja::elimina', ["filter" => "auth"]);
 
 $routes->post('ventas', 'Ventas::guarda', ["filter" => "auth"]);
+$routes->get('ventas/muestraTicket/(:num)', 'Ventas::verTicket/$1', ["filter" => "auth"]);
+$routes->get('ventas/generaTicket/(:num)', 'Ventas::generaTicket/$1', ["filter" => "auth"]);
 
 // Configuración
 $routes->get('datos', 'Configuracion::edit', ["filter" => "auth"]);
