@@ -17,6 +17,7 @@ use App\Models\DetalleVentasModel;
 use App\Models\ProductosModel;
 use App\Models\TemporalCajaModel;
 use App\ThirdParty\Fpdf\FPDF;
+use App\ThirdParty\NumerosALetras;
 
 class Ventas extends BaseController
 {
@@ -83,7 +84,13 @@ class Ventas extends BaseController
 
     public function verTicket($idVenta)
     {
-        return view('ventas/ticket', ['idVenta' => $idVenta]);
+        $datosVenta   = $this->ventasModel->find($idVenta);
+
+        if ($datosVenta) {
+            return view('ventas/ticket', ['idVenta' => $idVenta]);
+        } else {
+            return view('ventas/mensaje', ['mensaje' => 'No se encontró información.']);
+        }
     }
 
     public function generaTicket($idVenta)
@@ -109,6 +116,8 @@ class Ventas extends BaseController
 
         $fecha = substr($datosVenta['fecha'], 0, 10);
         $hora = substr($datosVenta['fecha'], 11, 8);
+
+        $total = $datosVenta['total'];
 
         $pdf->Multicell(60, 4, mb_convert_encoding($configuracionArray['tienda_nombre'], 'ISO-8859-1', 'UTF-8'), 0, 'C', 0);
 
@@ -146,11 +155,11 @@ class Ventas extends BaseController
         $pdf->Ln();
         $pdf->SetFont('Arial', 'B', 9);
         $pdf->Cell(50, 4, 'Total', 0, 0, 'R');
-        $pdf->Cell(20, 4, '$ ' . number_format($datosVenta['total'], 2, '.', ','), 0, 1, 'R');
+        $pdf->Cell(20, 4, '$ ' . number_format($total, 2, '.', ','), 0, 1, 'R');
 
         $pdf->Ln();
         $pdf->SetFont('Arial', '', 8);
-        // $pdf->MultiCell(70, 4, 'Son ' . ucfirst(strtolower(NumeroALetras::convertir($datosVenta->total, 'pesos', 'centavos'))), 0, 'L', 0);
+        $pdf->MultiCell(70, 4, 'Son ' . ucfirst(strtolower(NumerosALetras::convertir($total, 'pesos', 'centavos'))), 0, 'L', 0);
 
         $pdf->Ln();
         $pdf->Cell(10);
