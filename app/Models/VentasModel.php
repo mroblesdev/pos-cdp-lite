@@ -38,4 +38,16 @@ class VentasModel extends Model
         $query = $this->db->table('v_ventas')->where('activo', $activo);
         return $query->get()->getResultArray();
     }
+
+    // Consulta ventas por fechas
+    public function ventasRango($fechaInicio, $fechaFin, $activo = 1)
+    {
+        $query = $this->select('fecha_alta, folio, total')
+            ->table('v_ventas')
+            ->where("activo = $activo")
+            ->where("DATE(fecha_alta) BETWEEN '$fechaInicio' AND '$fechaFin'")
+            ->orderBy('fecha_alta DESC')
+            ->get();
+        return $query->getResultArray();
+    }
 }

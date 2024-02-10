@@ -17,6 +17,17 @@
                     Ventas
                 </a>
 
+                <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseReportes" aria-expanded="false" aria-controls="collapseReportes">
+                    <div class="sb-nav-link-icon"><i class="fa-solid fa-list-alt"></i></div>
+                    Reportes
+                    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                </a>
+                <div class="collapse" id="collapseReportes" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                    <nav class="sb-sidenav-menu-nested nav">
+                        <a class="nav-link" href="<?php echo base_url('reportes/crea_ventas'); ?>">Reporte de ventas</a>
+                    </nav>
+                </div>
+
                 <a class="nav-link" href="<?= base_url('datos'); ?>">
                     <div class="sb-nav-link-icon"><i class="fa-solid fa-shop"></i></div>
                     Datos de la tienda
