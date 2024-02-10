@@ -26,7 +26,10 @@ $routes->get('caja', 'Caja::index', ["filter" => "auth"]);
 $routes->post('caja/inserta', 'Caja::inserta', ["filter" => "auth"]);
 $routes->post('caja/elimina', 'Caja::elimina', ["filter" => "auth"]);
 
+$routes->get('ventas', 'Ventas::index', ["filter" => "auth"]);
+$routes->get('ventas/bajas', 'Ventas::bajas', ["filter" => "auth"]);
 $routes->post('ventas', 'Ventas::guarda', ["filter" => "auth"]);
+$routes->delete('ventas/(:num)', 'Ventas::cancelar/$1', ["filter" => "auth"]);
 $routes->get('ventas/muestraTicket/(:num)', 'Ventas::verTicket/$1', ["filter" => "auth"]);
 $routes->get('ventas/generaTicket/(:num)', 'Ventas::generaTicket/$1', ["filter" => "auth"]);
 

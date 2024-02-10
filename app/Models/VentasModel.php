@@ -32,4 +32,10 @@ class VentasModel extends Model
     protected $createdField  = 'fecha_alta';
     protected $updatedField  = 'fecha_modifica';
 
+    // Consulta vista "v_ventas"
+    public function mostrarVentas($activo = 1)
+    {
+        $query = $this->db->table('v_ventas')->where('activo', $activo);
+        return $query->get()->getResultArray();
+    }
 }

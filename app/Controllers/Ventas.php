@@ -27,14 +27,24 @@ class Ventas extends BaseController
     {
         $this->ventasModel = model('VentasModel');
     }
+
+    // Cargar catálogo de ventas activas
     public function index()
     {
-        return view('inicio');
+        $ventas = $this->ventasModel->mostrarVentas(1);
+        return view('ventas/index', ['ventas' => $ventas]);
     }
 
+    // Cargar catálogo de ventas canceladas
+    public function bajas()
+    {
+        $ventas = $this->ventasModel->mostrarVentas(0);
+        return view('ventas/eliminados', ['ventas' => $ventas]);
+    }
+
+    // Guarda venta
     public function guarda()
     {
-
         $temporalModel = new TemporalCajaModel();
         $configModel   = new ConfiguracionModel();
 
@@ -82,6 +92,7 @@ class Ventas extends BaseController
         return redirect()->to(base_url('ventas/muestraTicket/' . $idVenta));
     }
 
+    // Muesta ticket de venta
     public function verTicket($idVenta)
     {
         $datosVenta   = $this->ventasModel->find($idVenta);
@@ -93,6 +104,7 @@ class Ventas extends BaseController
         }
     }
 
+    // Genera ticket de venta
     public function generaTicket($idVenta)
     {
         $detalleVentasModel = new DetalleVentasModel();
@@ -171,7 +183,7 @@ class Ventas extends BaseController
         $pdf->Multicell(70, 4, mb_convert_encoding($configuracionArray['ticket_leyenda'], 'ISO-8859-1', 'UTF-8'), 0, 'C', 0);
 
         if ($datosVenta['activo'] == 0) {
-            $pdf->SetTextColor(255, 0, 0,);
+            $pdf->SetTextColor(255, 0, 0);
             $pdf->SetFontSize(24);
             $pdf->SetY(30);
             $pdf->Cell(0, 5, 'Venta cancelada', 0, 0, 'C');
@@ -179,5 +191,12 @@ class Ventas extends BaseController
 
         $this->response->setHeader('Content-Type', 'application/pdf');
         $pdf->Output("Ticket.pdf", 'I');
+    }
+
+    // Cancela venta
+    public function cancelar($id)
+    {
+        $this->ventasModel->update($id, ['activo' => 0]);
+        return redirect()->to(base_url('ventas'));
     }
 }
