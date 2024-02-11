@@ -2,7 +2,9 @@
 
 namespace App\Controllers;
 
+use App\Models\ProductosModel;
 use App\Models\VentasModel;
+use App\ThirdParty\Fpdf\PlantillaProductos;
 use App\ThirdParty\Fpdf\PlantillaVentas;
 
 class Reportes extends BaseController
@@ -72,6 +74,57 @@ class Reportes extends BaseController
         $pdf->Cell(60, 5, '$ ' . number_format($total, 2, '.', ','), 1, 1, 'C');
         $pdf->Ln(3);
         $pdf->Cell(70, 5, mb_convert_encoding('Número de ventas: ', 'ISO-8859-1', 'UTF-8') . $numVentas, 0, 0, 'L');
+
+        $this->response->setHeader('Content-Type', 'application/pdf');
+        $pdf->Output("ReporteVentas.pdf", "I");
+    }
+
+    // Muesta el reporte de productos
+    public function verReporteProductos()
+    {
+        return view('reportes/ver_reporte_productos');
+    }
+
+    // Genera reporte de productos
+    public function generaProductos()
+    {
+        $productosModel = new ProductosModel();
+        $productos = $productosModel->productosInventario();
+
+        $logo = base_url('images/logotipo.png');
+
+        $datos = [
+            'titulo' => 'Reporte de productos',
+            'logo' => $logo
+        ];
+
+        $pdf = new PlantillaProductos('P', 'mm', 'letter', $datos);
+        $pdf->SetTitle('Reporte de ventas');
+        $pdf->AliasNbPages();
+        $pdf->AddPage();
+        $pdf->SetWidths([30, 95, 30, 20, 20]);
+        $pdf->SetFont('Arial', 'B', 8);
+        $pdf->Row(['Código', 'Nombre', 'Precio', 'Inventariable', 'Existencias']);
+        $pdf->SetFont('Arial', '', 7);
+
+        $numProductos = 0;
+
+        foreach ($productos as $producto) {
+            $pdf->row(
+                [
+                    $producto['codigo'],
+                    $producto['nombre'],
+                    '$ ' . number_format($producto['precio'], 2, '.', ','),
+                    $producto['inventariable'],
+                    $producto['existencia']
+                ]
+            );
+            $numProductos++;
+        }
+
+        $pdf->SetFont('Arial', 'B', 9);
+        $pdf->Ln(3);
+        $pdf->Cell(70, 5, mb_convert_encoding('Número de productos: ', 'ISO-8859-1', 'UTF-8') . $numProductos, 0, 0, 'L');
 
         $this->response->setHeader('Content-Type', 'application/pdf');
         $pdf->Output("ReporteVentas.pdf", "I");

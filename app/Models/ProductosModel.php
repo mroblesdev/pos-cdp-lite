@@ -54,4 +54,25 @@ class ProductosModel extends Model
             ->set('existencia', "existencia $operador $cantidad", false)
             ->update();
     }
+
+    /**
+     * Seleccionar los prodictos activos agregando etiquetas
+     * a inventariable y existencias
+     */
+    public function productosInventario($activo = 1)
+    {
+        $query = $this->select(
+            'id, codigo, nombre, precio, inventariable,
+            (CASE 
+                WHEN inventariable = 1 THEN "SI"
+                ELSE "NO" 
+            END) AS inventariable,
+            (CASE
+                WHEN inventariable = 1 THEN existencia
+                    ELSE "N/A" 
+                END) AS existencia'
+        )->where('activo', $activo)->get();
+
+        return $query->getResultArray();
+    }
 }

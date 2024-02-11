@@ -25,6 +25,7 @@
                 <div class="collapse" id="collapseReportes" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                     <nav class="sb-sidenav-menu-nested nav">
                         <a class="nav-link" href="<?php echo base_url('reportes/crea_ventas'); ?>">Reporte de ventas</a>
+                        <a class="nav-link" href="<?php echo base_url('reportes/productos'); ?>">Reporte de productos</a>
                     </nav>
                 </div>
 

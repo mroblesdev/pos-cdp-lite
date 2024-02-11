@@ -38,6 +38,8 @@ $routes->get('ventas/generaTicket/(:num)', 'Ventas::generaTicket/$1', ["filter" 
 $routes->get('reportes/crea_ventas', 'Reportes::creaVentas', ["filter" => "auth"]);
 $routes->post('reportes/ventas', 'Reportes::verReporteVentas', ["filter" => "auth"]);
 $routes->get('reportes/genera_ventas/(:segment)/(:segment)/(:num)', 'Reportes::generaVentas/$1/$2/$3', ["filter" => "auth"]);
+$routes->get('reportes/productos', 'Reportes::verReporteProductos', ["filter" => "auth"]);
+$routes->get('reportes/genera_productos', 'Reportes::generaProductos', ["filter" => "auth"]);
 
 // Configuración
 $routes->get('datos', 'Configuracion::edit', ["filter" => "auth"]);

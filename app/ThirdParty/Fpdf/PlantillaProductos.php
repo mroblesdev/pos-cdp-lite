@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Plantilla de FPDF para crear reporte de ventas
+ * Plantilla de FPDF para crear reporte de productos
  *
  * Esta clase agregar un encabezado y pie de página para cada hoja.
  * Tambien crea una tabla a partir de multicells de tamaño dinamico
@@ -16,7 +16,7 @@ namespace App\ThirdParty\Fpdf;
 
 use App\ThirdParty\Fpdf\Fpdf;
 
-class PlantillaVentas extends Fpdf
+class PlantillaProductos extends Fpdf
 {
 	private $widths;
 	private $aligns;
@@ -38,9 +38,7 @@ class PlantillaVentas extends Fpdf
 
 		$this->SetXY(155, $y);
 		$this->SetFont('Arial', '', 8);
-		$this->Cell(50, 4, 'Periodo: ' . $this->datos['inicio'] . ' a ' . $this->datos['fin'], 0, 1, 'L');
-		$this->SetXY(155, $y + 4);
-		$this->Cell(50, 4, 'Fecha y hora: ' . date('d-m-Y H:i'), 0, 1, 'L');
+		$this->Cell(50, 4, 'Fecha: ' . date('d/m/Y h:i'), 0, 1, 'R');
 
 		$this->Ln(8);
 	}
@@ -83,7 +81,7 @@ class PlantillaVentas extends Fpdf
 			//Draw the border
 			$this->Rect($x, $y, $w, $h);
 			//Print the text
-			$this->MultiCell($w, 5, $data[$i], 0, $a);
+			$this->MultiCell($w, 5, mb_convert_encoding($data[$i], 'ISO-8859-1', 'UTF-8'), 0, $a);
 			//Put the position to the right of the cell
 			$this->SetXY($x + $w, $y);
 		}
@@ -97,8 +95,8 @@ class PlantillaVentas extends Fpdf
 		if ($this->GetY() + 10 > $this->PageBreakTrigger) {
 			$this->AddPage($this->CurOrientation);
 			$this->SetFont('Arial', 'B', 8);
-			$this->Row(array('Fecha', 'Folio', 'Total'));
-			$this->SetFont('Arial', '', 8);
+			$this->Row(['Código', 'Nombre', 'Precio', 'Inventariable', 'Existencias']);
+			$this->SetFont('Arial', '', 7);
 		}
 	}
 
