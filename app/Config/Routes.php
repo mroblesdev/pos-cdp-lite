@@ -44,3 +44,7 @@ $routes->get('reportes/genera_productos', 'Reportes::generaProductos', ["filter"
 // Configuración
 $routes->get('datos', 'Configuracion::edit', ["filter" => "auth"]);
 $routes->put('datos', 'Configuracion::update', ["filter" => "auth"]);
+
+// Usuarios
+$routes->get('cambia-password', 'Login::cambiaPassword', ["filter" => "auth"]);
+$routes->post('cambia-password', 'Login::actualizaPassword', ["filter" => "auth"]);

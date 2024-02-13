@@ -60,4 +60,30 @@ class Login extends BaseController
 
         return redirect()->to(base_url());
     }
+
+    public function cambiaPassword()
+    {
+        helper('form');
+        return view('cambia_password', ['usuario' => $this->session]);
+    }
+
+    public function actualizaPassword()
+    {
+        $reglas = [
+            'password'     => ['label' => 'contraseña', 'rules' => 'required'],
+            'con_password' => ['label' => 'confirmar contraseña', 'rules' => 'required|matches[password]'],
+        ];
+
+        if (!$this->validate($reglas)) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->listErrors());
+        }
+
+        $usuarioModel = new UsuariosModel();
+        $post = $this->request->getPost(['id_usuario', 'password']);
+
+        $hash = password_hash($post['password'], PASSWORD_DEFAULT);
+        $usuarioModel->update($post['id_usuario'], ['password' => $hash]);
+
+        return redirect()->back()->withInput()->with('errors', 'Contraseña actualizada correctamente.');
+    }
 }
