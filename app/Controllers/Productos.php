@@ -145,7 +145,7 @@ class Productos extends BaseController
 
         $valor = $this->request->getGet('term');
 
-        $productos = $this->productosModel->porCodigoLike($valor);
+        $productos = $this->productosModel->buscarPorCodigoNombre($valor);
         if (!empty($productos)) {
             foreach ($productos as $producto) {
                 $data['id']    = $producto['id'];

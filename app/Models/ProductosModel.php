@@ -32,14 +32,20 @@ class ProductosModel extends Model
     protected $createdField  = 'fecha_alta';
     protected $updatedField  = 'fecha_modifica';
 
-    // Obtener productos filtrando código por LIKE
-    public function porCodigoLike($codigo = '')
+    /**
+     * Buscar registros por código o nombre similar.
+     *
+     * @param string $codigoNombre El código o nombre a buscar.
+     * @return array Resultado de la consulta en formato de array.
+     */
+    public function buscarPorCodigoNombre($codigoNombre  = '')
     {
-        $codigo = $this->escapeLikeString($codigo);
+        $codigoNombre  = $this->escapeLikeString($codigoNombre);
 
         $query = $this->select('id, codigo, nombre')
             ->where('activo', 1)
-            ->like('codigo', $codigo)
+            ->like('codigo', $codigoNombre)
+            ->orLike('nombre', $codigoNombre)
             ->orderBy('codigo', 'ASC')
             ->limit(10)
             ->get();
