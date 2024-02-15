@@ -50,4 +50,11 @@ class VentasModel extends Model
             ->get();
         return $query->getResultArray();
     }
+
+    public function totalVentasDia($fecha)
+    {
+        $where = "activo = 1 AND DATE(fecha) = '$fecha'";
+        $this->select("IFNULL(sum(total), 0) AS total");
+        return $this->where($where)->first();
+    }
 }
