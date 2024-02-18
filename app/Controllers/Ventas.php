@@ -16,7 +16,7 @@ use App\Models\ConfiguracionModel;
 use App\Models\DetalleVentasModel;
 use App\Models\ProductosModel;
 use App\Models\TemporalCajaModel;
-use App\ThirdParty\Fpdf\FPDF;
+use App\ThirdParty\Fpdf\Fpdf;
 use App\ThirdParty\NumerosALetras;
 
 class Ventas extends BaseController
@@ -120,7 +120,7 @@ class Ventas extends BaseController
         $datosVenta   = $this->ventasModel->find($idVenta);
         $detalleVenta = $detalleVentasModel->where('venta_id', $idVenta)->findAll();
 
-        $pdf = new FPDF('P', 'mm', array(80, 250));
+        $pdf = new Fpdf('P', 'mm', array(80, 250));
         $pdf->AddPage();
         $pdf->SetMargins(5, 5, 5);
         $pdf->SetTitle("Ticket");

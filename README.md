@@ -16,7 +16,7 @@ Con una interfaz adaptable que hace la administración del sistema más eficient
 - Composer
 - Git (opcional)
 
-## Características versión 1.0:
+## Características versión 1.0
 
 - Acceso por credenciales
 - Catalogo de productos
@@ -33,9 +33,8 @@ Con una interfaz adaptable que hace la administración del sistema más eficient
 ## Capturas de pantalla
 
 | ![Inicio de sesión](public/images/capturas/1-Login.png)  |  ![Dashboard](public/images/capturas/2-Dasdboard.png)
-| :---: | :---: |
+| --- | --- |
 | ![Caja](public/images/capturas/3-Caja.png)  |  ![Ticket](public/images/capturas/4-Ticket.png)
-| :---: | :---: |
 | ![Propuctos](public/images/capturas/5-Productos.png)  |  ![Reporte](public/images/capturas/6-Reporte.png)
 
 ## Contribuciones

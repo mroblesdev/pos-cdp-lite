@@ -12,7 +12,7 @@ namespace App\ThirdParty\Fpdf;
 
 use Exception;
 
-class FPDF
+class Fpdf
 {
 	const VERSION = '1.86';
 	protected $page;               // current page number
