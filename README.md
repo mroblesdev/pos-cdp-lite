@@ -1,62 +1,47 @@
-# CodeIgniter 4 Application Starter
+# Sistema de Punto de Venta CDP Lite
 
-## What is CodeIgniter?
+El sistema de punto de venta CDP Lite es una aplicación web basada en el lenguaje PHP y MySQL con la cual puedes mantener el control de inventario y venta de productos en una tienda. Este proyecto fue desarrollado utilizando CodeIgniter 4.
 
-CodeIgniter is a PHP full-stack web framework that is light, fast, flexible and secure.
-More information can be found at the [official site](https://codeigniter.com).
+El sistema cuenta con un catalogo de productos, módulo de caja, ventas y reportes.
 
-This repository holds a composer-installable app starter.
-It has been built from the
-[development repository](https://github.com/codeigniter4/CodeIgniter4).
+Con una interfaz adaptable que hace la administración del sistema más eficiente y permite la navegación móvil (diseño responsivo).
 
-More information about the plans for version 4 can be found in [CodeIgniter 4](https://forum.codeigniter.com/forumdisplay.php?fid=28) on the forums.
+## Requisitos
 
-The user guide corresponding to the latest version of the framework can be found
-[here](https://codeigniter4.github.io/userguide/).
+- Servidor web (Apache Server 2.4 o superior).
+- PHP 7.4 o superior.
+  - Extensión [intl](http://php.net/manual/en/intl.requirements.php)
+  - Extensión [mbstring](http://php.net/manual/en/mbstring.installation.php)
+- MySQL 5.6 o superior.
+- Composer
+- Git (opcional)
 
-## Installation & updates
+## Características versión 1.0:
 
-`composer create-project codeigniter4/appstarter` then `composer update` whenever
-there is a new release of the framework.
+- Acceso por credenciales
+- Catalogo de productos
+- Caja de cobro
+- Generación de ticket
+- Historial de ventas
+  - Reimpresión de ticket
+  - Cancelar ventas
+- Reportes
+  - Ventas
+  - Productos
+- Configuración del sistema
 
-When updating, check the release notes to see if there are any changes you might need to apply
-to your `app` folder. The affected files can be copied or merged from
-`vendor/codeigniter4/framework/app`.
+## Capturas de pantalla
 
-## Setup
+| ![Inicio de sesión](public/images/capturas/1-Login.png)  |  ![Dashboard](public/images/capturas/2-Dasdboard.png)
+| :---: | :---: |
+| ![Caja](public/images/capturas/3-Caja.png)  |  ![Ticket](public/images/capturas/4-Ticket.png)
+| :---: | :---: |
+| ![Propuctos](public/images/capturas/5-Productos.png)  |  ![Reporte](public/images/capturas/6-Reporte.png)
 
-Copy `env` to `.env` and tailor for your app, specifically the baseURL
-and any database settings.
+## Contribuciones
 
-## Important Change with index.php
+Siéntete libre de contribuir al proyecto.
 
-`index.php` is no longer in the root of the project! It has been moved inside the *public* folder,
-for better security and separation of components.
+## Licencia
 
-This means that you should configure your web server to "point" to your project's *public* folder, and
-not to the project root. A better practice would be to configure a virtual host to point there. A poor practice would be to point your web server to the project root and expect to enter *public/...*, as the rest of your logic and the
-framework are exposed.
-
-**Please** read the user guide for a better explanation of how CI4 works!
-
-## Repository Management
-
-We use GitHub issues, in our main repository, to track **BUGS** and to track approved **DEVELOPMENT** work packages.
-We use our [forum](http://forum.codeigniter.com) to provide SUPPORT and to discuss
-FEATURE REQUESTS.
-
-This repository is a "distribution" one, built by our release preparation script.
-Problems with it can be raised on our forum, or as issues in the main repository.
-
-## Server Requirements
-
-PHP version 7.4 or higher is required, with the following extensions installed:
-
-- [intl](http://php.net/manual/en/intl.requirements.php)
-- [mbstring](http://php.net/manual/en/mbstring.installation.php)
-
-Additionally, make sure that the following extensions are enabled in your PHP:
-
-- json (enabled by default - don't turn it off)
-- [mysqlnd](http://php.net/manual/en/mysqlnd.install.php) if you plan to use MySQL
-- [libcurl](http://php.net/manual/en/curl.requirements.php) if you plan to use the HTTP\CURLRequest library
+Este proyecto está bajo la Licencia [MIT](LICENSE).
