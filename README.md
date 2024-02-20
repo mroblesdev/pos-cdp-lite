@@ -16,6 +16,77 @@ Con una interfaz adaptable que hace la administración del sistema más eficient
 - Composer
 - Git (opcional)
 
+## Instalación
+### 1. Clonar repositorio:
+```
+git clone https://github.com/mroblesdev/pos-cdp-lite.git
+```
+
+### 2. Instalar dependencias con Composer:
+```
+cd pos-cdp-lite
+composer install --no-dev
+```
+
+### 3. Configuración del entorno:
+
+- Copia el archivo `env` a un nuevo archivo llamado `.env`.
+- Modifica el archivo `.env` según tu configuración de base de datos y otros ajustes necesarios.
+
+```
+app.baseURL = 'http://localhost/pos-cdp-lite/public/'
+
+
+database.default.hostname = localhost
+database.default.database = pos-cdp-lite
+database.default.username = root
+database.default.password = 
+database.default.DBDriver = MySQLi
+```
+
+Crear una base de datos con el nombre `pos-cdp-lite`.
+
+### 4. Ejecutar migraciones y seeders:
+```
+php spark migrate
+
+php spark db:seed ConfiguracionSeeder
+php spark db:seed UsuariosSeeder
+```
+
+### 5. Ejecutar la aplicación:
+```
+php spark serve
+``` 
+
+Esto iniciará el servidor en http://localhost:8080 por defecto.
+
+O en Apache Server con al dirección http://localhost/pos-cdp-lite/public
+
+**Datos de acceso**
+
+- **Usuario:** admin
+
+- **Contraseña:** admin
+
+### Habilitar mod_rewrite en Apache Server
+
+El módulo `mod_rewrite` habilita URL sin `index.php`.
+
+Asegúrese de que el módulo de reescritura esté habilitado (sin comentar) en el archivo de configuración principal, por ejemplo, `apache2/conf/httpd.conf`:
+```
+LoadModule rewrite_module modules/mod_rewrite.so
+```
+
+También asegúrese de que el elemento raíz del documento predeterminado `<Directory>` también lo habilite, en la configuración `AllowOverride`:
+```
+<Directory "/opt/lamp/apache2/htdocs">
+    Options Indexes FollowSymLinks
+    AllowOverride All
+    Require all granted
+</Directory>
+```
+
 ## Características versión 1.0
 
 - Acceso por credenciales
@@ -30,6 +101,11 @@ Con una interfaz adaptable que hace la administración del sistema más eficient
   - Productos
 - Configuración del sistema
 
+## Demostración
+
+Para acceder a nuestra demostración y explorar todas las funcionalidades del Punto de Venta CDP Lite, por favor visita https://pos-lite.sistemarv.com
+
+
 ## Capturas de pantalla
 
 | ![Inicio de sesión](public/images/capturas/1-Login.png)  |  ![Dashboard](public/images/capturas/2-Dasdboard.png)
@@ -40,6 +116,11 @@ Con una interfaz adaptable que hace la administración del sistema más eficient
 ## Contribuciones
 
 Siéntete libre de contribuir al proyecto.
+
+## Expresiones de Gratitud 🎁
+
+- Comenta a otros sobre este proyecto 📢
+- Invitame una cerveza 🍺 o un café ☕ [Da clic aquí](https://www.paypal.com/paypalme/markorobles?locale.x=es_XC.).
 
 ## Licencia
 

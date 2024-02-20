@@ -33,7 +33,7 @@ class Login extends BaseController
 
         if ($usuarioData !== null) {
             $this->configurarSesion($usuarioData);
-            return redirect()->to(base_url() . '/inicio');
+            return redirect()->to(base_url('inicio'));
         }
 
         $this->session->destroy();
