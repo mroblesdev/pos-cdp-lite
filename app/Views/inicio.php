@@ -22,7 +22,7 @@ $this->section('contentido');
         <div class="card bg-success text-white mb-4 h-100">
             <div class="card-body"><?php echo number_format($totalVentas['total'], 2, '.', ','); ?> Ventas del día</div>
             <div class="card-footer d-flex align-items-center justify-content-between">
-                <a class="small text-white stretched-link" href="<?php echo base_url('productos'); ?>">Ver detalles</a>
+                <a class="small text-white stretched-link" href="<?php echo base_url('ventas'); ?>">Ver detalles</a>
                 <div class="small text-white">
                     <i class="fa-solid fa-angle-right"></i>
                 </div>
