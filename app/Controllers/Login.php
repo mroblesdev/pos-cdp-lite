@@ -1,5 +1,16 @@
 <?php
 
+/**
+ * Controlador de Inicio de sesión
+ *
+ * Esta clase controla las operaciones relacionadas con el inicio y cierre de sesión,
+ * así como de actualización de contraseña.
+ *
+ * @version 1.0
+ * @link https://github.com/mroblesdev/pos-cdp-lite
+ * @author mroblesdev
+ */
+
 namespace App\Controllers;
 
 use App\Models\UsuariosModel;
@@ -8,8 +19,6 @@ class Login extends BaseController
 {
     public function index()
     {
-        /*$seeder = \Config\Database::seeder();
-        $seeder->call('UsuariosSeeder');*/
         return view('login');
     }
 

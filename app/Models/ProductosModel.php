@@ -3,7 +3,7 @@
 /**
  * Modelo de productos
  *
- * Esta modelo gestiona la interacción con la tabla "productos".
+ * Este modelo gestiona la interacción con la tabla "productos".
  *
  * @version 1.0
  * @link https://github.com/mroblesdev/pos-cdp-lite
@@ -69,13 +69,13 @@ class ProductosModel extends Model
     {
         $query = $this->select(
             'id, codigo, nombre, precio, inventariable,
-            (CASE 
+            (CASE
                 WHEN inventariable = 1 THEN "SI"
-                ELSE "NO" 
+                ELSE "NO"
             END) AS inventariable,
             (CASE
                 WHEN inventariable = 1 THEN existencia
-                    ELSE "N/A" 
+                    ELSE "N/A"
                 END) AS existencia'
         )->where('activo', $activo)->get();
 

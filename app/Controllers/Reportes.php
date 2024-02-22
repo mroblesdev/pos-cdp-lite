@@ -1,5 +1,15 @@
 <?php
 
+/**
+ * Controlador de Reportes
+ *
+ * Esta clase controla las operaciones relacionadas con la generación de reportes.
+ *
+ * @version 1.0
+ * @link https://github.com/mroblesdev/pos-cdp-lite
+ * @author mroblesdev
+ */
+
 namespace App\Controllers;
 
 use App\Models\ProductosModel;
@@ -46,7 +56,7 @@ class Reportes extends BaseController
         ];
 
         $pdf = new PlantillaVentas('P', 'mm', 'letter', $datos);
-        $pdf->SetTitle('Reporte de ventas');
+        $pdf->SetTitle($datos['titulo']);
         $pdf->AliasNbPages();
         $pdf->AddPage();
         $pdf->SetWidths([60, 60, 60]);
@@ -66,7 +76,7 @@ class Reportes extends BaseController
                 ]
             );
             $total = $total + $venta['total'];
-            ++$numVentas;
+            $numVentas++;
         }
 
         $pdf->SetFont('Arial', 'B', 9);

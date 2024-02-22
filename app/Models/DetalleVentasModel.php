@@ -3,7 +3,7 @@
 /**
  * Modelo de ventas
  *
- * Esta modelo gestiona la interacción con la tabla "ventas".
+ * Este modelo gestiona la interacción con la tabla "ventas".
  *
  * @version 1.0
  * @link https://github.com/mroblesdev/pos-cdp-lite

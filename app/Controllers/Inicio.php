@@ -1,5 +1,15 @@
 <?php
 
+/**
+ * Controlador de Inicio
+ *
+ * Esta clase controla las operaciones relacionadas con el Dashboard.
+ *
+ * @version 1.0
+ * @link https://github.com/mroblesdev/pos-cdp-lite
+ * @author mroblesdev
+ */
+
 namespace App\Controllers;
 
 use App\Models\ProductosModel;

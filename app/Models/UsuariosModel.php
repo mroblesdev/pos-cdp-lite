@@ -1,5 +1,15 @@
 <?php
 
+/**
+ * Modelo de usuarios
+ *
+ * Este modelo gestiona la interacción con la tabla "usuarios".
+ *
+ * @version 1.0
+ * @link https://github.com/mroblesdev/pos-cdp-lite
+ * @author mroblesdev
+ */
+
 namespace App\Models;
 
 use CodeIgniter\Model;

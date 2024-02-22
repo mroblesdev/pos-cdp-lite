@@ -1,5 +1,15 @@
 <?php
 
+/**
+ * Controlador de Configuración
+ *
+ * Esta clase controla las operaciones relacionadas con la configuración del sistema.
+ *
+ * @version 1.0
+ * @link https://github.com/mroblesdev/pos-cdp-lite
+ * @author mroblesdev
+ */
+
 namespace App\Controllers;
 
 use App\Models\ConfiguracionModel;

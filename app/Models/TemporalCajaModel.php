@@ -3,7 +3,7 @@
 /**
  * Modelo de temporal_caja
  *
- * Esta modelo gestiona la interacción con la tabla "temporal_caja".
+ * Este modelo gestiona la interacción con la tabla "temporal_caja".
  * Incluye funciones para actualizar, seleccionar y eliminar registros.
  *
  * @version 1.0

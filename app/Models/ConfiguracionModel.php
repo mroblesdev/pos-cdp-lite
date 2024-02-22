@@ -3,7 +3,7 @@
 /**
  * Modelo de ventas
  *
- * Esta modelo gestiona la interacción con la tabla "configuracion".
+ * Este modelo gestiona la interacción con la tabla "configuracion".
  *
  * @version 1.0
  * @link https://github.com/mroblesdev/pos-cdp-lite
