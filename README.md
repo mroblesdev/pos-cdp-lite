@@ -2,10 +2,6 @@
 
 El sistema de punto de venta CDP Lite es una aplicación web basada en el lenguaje PHP y MySQL con la cual puedes mantener el control de inventario y venta de productos en una tienda. Este proyecto fue desarrollado utilizando CodeIgniter 4.
 
-El sistema cuenta con un catalogo de productos, módulo de caja, ventas y reportes.
-
-Con una interfaz adaptable que hace la administración del sistema más eficiente y permite la navegación móvil (diseño responsivo).
-
 ## Requisitos
 
 - Servidor web (Apache Server 2.4 o superior).
@@ -17,18 +13,29 @@ Con una interfaz adaptable que hace la administración del sistema más eficient
 - Git (opcional)
 
 ## Instalación
-### 1. Clonar repositorio:
-```
-git clone https://github.com/mroblesdev/pos-cdp-lite.git
+### 1. Descarga:
+
+#### Composer
+
+```sh-session
+$ composer create-project mroblesdev/pos-cdp-lite
 ```
 
-### 2. Instalar dependencias con Composer:
-```
-cd pos-cdp-lite
-composer install --no-dev
+#### Git
+
+```sh-session
+$ git clone https://github.com/mroblesdev/pos-cdp-lite.git
+$ cd pos-cdp-lite
+$ composer install --no-dev
 ```
 
-### 3. Configuración del entorno:
+### 2. Configuración del entorno:
+
+- Crear una base de datos
+
+```
+mysql> CREATE DATABASE IF NOT EXISTS `pos-cdp-lite` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
 
 - Copia el archivo `env` a un nuevo archivo llamado `.env`.
 - Modifica el archivo `.env` según tu configuración de base de datos y otros ajustes necesarios.
@@ -44,9 +51,7 @@ database.default.password =
 database.default.DBDriver = MySQLi
 ```
 
-Crear una base de datos con el nombre `pos-cdp-lite`.
-
-### 4. Ejecutar migraciones y seeders:
+### 3. Ejecutar migraciones y seeders:
 ```
 php spark migrate
 
@@ -54,7 +59,7 @@ php spark db:seed ConfiguracionSeeder
 php spark db:seed UsuariosSeeder
 ```
 
-### 5. Ejecutar la aplicación:
+### 4. Ejecutar la aplicación:
 ```
 php spark serve
 ``` 
@@ -68,24 +73,6 @@ O en Apache Server con al dirección http://localhost/pos-cdp-lite/public
 - **Usuario:** admin
 
 - **Contraseña:** admin
-
-### Habilitar mod_rewrite en Apache Server
-
-El módulo `mod_rewrite` habilita URL sin `index.php`.
-
-Asegúrese de que el módulo de reescritura esté habilitado (sin comentar) en el archivo de configuración principal, por ejemplo, `apache2/conf/httpd.conf`:
-```
-LoadModule rewrite_module modules/mod_rewrite.so
-```
-
-También asegúrese de que el elemento raíz del documento predeterminado `<Directory>` también lo habilite, en la configuración `AllowOverride`:
-```
-<Directory "/opt/lamp/apache2/htdocs">
-    Options Indexes FollowSymLinks
-    AllowOverride All
-    Require all granted
-</Directory>
-```
 
 ## Características versión 1.0
 

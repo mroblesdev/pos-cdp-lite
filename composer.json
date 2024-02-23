@@ -1,13 +1,14 @@
 {
     "name": "mroblesdev/pos-cdp-lite",
-    "description": "Sistema Punto de Venta CDP Lite 1.0.0",
+    "description": "Sistema Punto de Venta CDP Lite usando CodeIgniter 4",
     "license": "MIT",
     "type": "project",
     "homepage": "https://codigosdeprogramacion.com",
     "authors": [
         {
             "name": "Marco Robles",
-            "role": "Developer"
+            "role": "Developer",
+            "homepage": "https://github.com/mroblesdev"
         }
     ],
     "support": {
@@ -15,7 +16,10 @@
     },
     "require": {
         "php": "^7.4 || ^8.0",
-        "codeigniter4/framework": "^4.0"
+        "codeigniter4/framework": "^4.0",
+        "ext-intl": "*",
+        "ext-json": "*",
+        "ext-mbstring": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9",
