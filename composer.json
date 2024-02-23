@@ -1,13 +1,17 @@
 {
-    "name": "codeigniter4/appstarter",
-    "description": "CodeIgniter4 starter app",
+    "name": "mroblesdev/pos-cdp-lite",
+    "description": "Sistema Punto de Venta CDP Lite 1.0.0",
     "license": "MIT",
     "type": "project",
-    "homepage": "https://codeigniter.com",
+    "homepage": "https://codigosdeprogramacion.com",
+    "authors": [
+        {
+            "name": "Marco Robles",
+            "role": "Developer"
+        }
+    ],
     "support": {
-        "forum": "https://forum.codeigniter.com/",
-        "source": "https://github.com/codeigniter4/CodeIgniter4",
-        "slack": "https://codeigniterchat.slack.com"
+        "source": "https://github.com/mroblesdev/pos-cdp-lite"
     },
     "require": {
         "php": "^7.4 || ^8.0",

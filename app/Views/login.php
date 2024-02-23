@@ -54,13 +54,10 @@
                                         </div>
                                     </form>
 
-                                    <?php if (!empty($errors)) : ?>
+                                    <!-- Mensajes de validación -->
+                                    <?php if (session()->getFlashdata('errors') !== null) : ?>
                                         <div class="alert alert-danger my-3" role="alert">
-                                            <ul>
-                                                <?php foreach ($errors as $error) : ?>
-                                                    <li><?= esc($error) ?></li>
-                                                <?php endforeach ?>
-                                            </ul>
+                                            <?= session()->getFlashdata('errors'); ?>
                                         </div>
                                     <?php endif ?>
                                 </div>

@@ -32,7 +32,7 @@ class Login extends BaseController
         ];
 
         if (!$this->validate($reglas)) {
-            return view('login', ['errors' => $this->validator->getErrors()]);
+            return redirect()->back()->withInput()->with('errors', $this->validator->listErrors());
         }
 
         $usuarioModel = new UsuariosModel();
@@ -45,9 +45,7 @@ class Login extends BaseController
             return redirect()->to(base_url('inicio'));
         }
 
-        $this->session->destroy();
-        $this->validator->setError('error', 'El usuario y/o contraseña son incorrectos.');
-        return view('login', ['errors' => $this->validator->getErrors()]);
+        return redirect()->back()->withInput()->with('errors', 'El usuario y/o contraseña son incorrectos.');
     }
 
     private function configurarSesion($usuarioData)
