@@ -16,7 +16,6 @@
     },
     "require": {
         "php": "^7.4 || ^8.0",
-        "codeigniter4/framework": "^4.0",
         "ext-intl": "*",
         "ext-json": "*",
         "ext-mbstring": "*"
@@ -27,14 +26,12 @@
         "phpunit/phpunit": "^9.1"
     },
     "autoload": {
+        "psr-4": {
+            "CodeIgniter\\": "system/"
+        },
         "exclude-from-classmap": [
             "**/Database/Migrations/**"
         ]
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Tests\\Support\\": "tests/_support"
-        }
     },
     "config": {
         "optimize-autoloader": true,
