@@ -9,7 +9,7 @@ El sistema de punto de venta CDP Lite es una aplicación web basada en el lengua
   - Extensión [intl](http://php.net/manual/en/intl.requirements.php)
   - Extensión [mbstring](http://php.net/manual/en/mbstring.installation.php)
 - MySQL 5.6 o superior.
-- Composer
+- Composer (opcional)
 - Git (opcional)
 
 ## Instalación
@@ -28,6 +28,10 @@ $ git clone https://github.com/mroblesdev/pos-cdp-lite.git
 $ cd pos-cdp-lite
 $ composer install --no-dev
 ```
+
+### Descarga manual
+
+Alternativamente, si no está utilizando Composer, puede descargarlo como un archivo zip, luego copie el contenido de la carpeta su servidor web. https://github.com/mroblesdev/pos-cdp-lite/releases
 
 ### 2. Configuración del entorno:
 
