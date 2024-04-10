@@ -31,7 +31,7 @@ $ composer install --no-dev
 
 ### Descarga manual
 
-Alternativamente, si no está utilizando Composer, puede descargarlo como un archivo zip, luego copie el contenido de la carpeta su servidor web. https://github.com/mroblesdev/pos-cdp-lite/releases
+Alternativamente, si no está utilizando Composer, puede descargarlo como un archivo zip, luego copie el contenido de la carpeta a su servidor web. https://github.com/mroblesdev/pos-cdp-lite/releases
 
 ### 2. Configuración del entorno:
 
