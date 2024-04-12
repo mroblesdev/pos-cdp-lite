@@ -59,8 +59,7 @@ database.default.DBDriver = MySQLi
 ```
 php spark migrate
 
-php spark db:seed ConfiguracionSeeder
-php spark db:seed UsuariosSeeder
+php spark db:seed CargaSeeder
 ```
 
 ### 4. Ejecutar la aplicación:
