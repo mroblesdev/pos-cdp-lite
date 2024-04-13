@@ -10,7 +10,7 @@ $this->section('contentido');
         <div class="card bg-primary text-white mb-4 h-100">
             <div class="card-body"><?php echo $totalProductos; ?> Total de productos</div>
             <div class="card-footer d-flex align-items-center justify-content-between">
-                <a class="small text-white stretched-link" href="<?php echo base_url('productos'); ?>">View Details</a>
+                <a class="small text-white stretched-link" href="<?php echo base_url('productos'); ?>">Ver detalles</a>
                 <div class="small text-white">
                     <i class="fa-solid fa-angle-right"></i>
                 </div>
