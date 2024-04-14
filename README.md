@@ -25,8 +25,6 @@ $ composer create-project mroblesdev/pos-cdp-lite
 
 ```sh-session
 $ git clone https://github.com/mroblesdev/pos-cdp-lite.git
-$ cd pos-cdp-lite
-$ composer install --no-dev
 ```
 
 ### Descarga manual
@@ -51,7 +49,7 @@ app.baseURL = 'http://localhost/pos-cdp-lite/public/'
 database.default.hostname = localhost
 database.default.database = pos-cdp-lite
 database.default.username = root
-database.default.password = 
+database.default.password = password
 database.default.DBDriver = MySQLi
 ```
 
@@ -77,7 +75,7 @@ O en Apache Server con al dirección http://localhost/pos-cdp-lite/public
 
 - **Contraseña:** admin
 
-## Características versión 1.0
+## Características versión 1.1.0
 
 - Acceso por credenciales
 - Catalogo de productos
@@ -101,7 +99,7 @@ Para acceder a nuestra demostración y explorar todas las funcionalidades del Pu
 | ![Inicio de sesión](public/images/capturas/1-Login.png)  |  ![Dashboard](public/images/capturas/2-Dasdboard.png)
 | --- | --- |
 | ![Caja](public/images/capturas/3-Caja.png)  |  ![Ticket](public/images/capturas/4-Ticket.png)
-| ![Propuctos](public/images/capturas/5-Productos.png)  |  ![Reporte](public/images/capturas/6-Reporte.png)
+| ![Productos](public/images/capturas/5-Productos.png)  |  ![Reporte](public/images/capturas/6-Reporte.png)
 
 ## Contribuciones
 
