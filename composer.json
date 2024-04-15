@@ -20,11 +20,6 @@
         "ext-json": "*",
         "ext-mbstring": "*"
     },
-    "require-dev": {
-        "fakerphp/faker": "^1.9",
-        "mikey179/vfsstream": "^1.6",
-        "phpunit/phpunit": "^9.1"
-    },
     "autoload": {
         "psr-4": {
             "CodeIgniter\\": "system/"
@@ -38,7 +33,4 @@
         "preferred-install": "dist",
         "sort-packages": true
     },
-    "scripts": {
-        "test": "phpunit"
-    }
 }
