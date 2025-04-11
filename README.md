@@ -1,6 +1,17 @@
 # Sistema de Punto de Venta CDP Lite
 
-El sistema de punto de venta CDP Lite es una aplicación web basada en el lenguaje PHP y MySQL con la cual puedes mantener el control de inventario y venta de productos en una tienda. Este proyecto fue desarrollado utilizando CodeIgniter 4.
+El sistema de punto de venta CDP Lite es una aplicación web de código abierto basada en PHP y MySQL para gestionar las ventas en tu tienda. Este proyecto fue desarrollado utilizando CodeIgniter 4.
+
+### 🚀 ¿Buscas más funcionalidades?
+
+Si necesitas más características y herramientas para crecer tu negocio, te invitamos a conocer POS CDP Pro, la versión completa que incluye:
+
+- Múltiples cajas de venta y usuarios.
+- Gestión de movimientos de inventario.
+- Caja de cobro avanzada.
+- Módulos de clientes, categprías y unidades de medida.
+
+[¡Obtén más información aquí y empieza hoy mismo!](https://codigosdeprogramacion.com/2021/09/02/sistema-de-punto-de-venta-cdp-3)
 
 ## Requisitos
 
