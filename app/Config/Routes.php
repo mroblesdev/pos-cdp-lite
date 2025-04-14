@@ -14,6 +14,7 @@ $routes->get('logout', 'Login::logout');
 
 // Dashboard
 $routes->get('inicio', 'Inicio::index');
+$routes->get('premium', 'Inicio::premium');
 
 // Productos
 $routes->resource('productos', ['placeholder' => '(:num)', 'except' => 'show', "filter" => "auth"]);

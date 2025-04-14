@@ -33,6 +33,10 @@
                     <div class="sb-nav-link-icon"><i class="fa-solid fa-shop"></i></div>
                     Datos de la tienda
                 </a>
+
+                <a class="nav-link" href="<?= base_url('premium'); ?>" style="color: #f39c12;">
+                    <i class="fa-solid fa-star premium-icon"></i>&nbsp;Funciones premium
+                </a>
             </div>
         </div>
     </nav>

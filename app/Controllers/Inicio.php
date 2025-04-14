@@ -28,4 +28,9 @@ class Inicio extends BaseController
 
         return view('inicio', ['totalProductos' => $totalProductos, 'totalVentas' => $totalVentas]);
     }
+
+    public function premium()
+    {
+        return view('premium');
+    }
 }

@@ -9,9 +9,9 @@ Si necesitas más características y herramientas para crecer tu negocio, te inv
 - Múltiples cajas de venta y usuarios.
 - Gestión de movimientos de inventario.
 - Caja de cobro avanzada.
-- Módulos de clientes, categprías y unidades de medida.
+- Módulos de clientes, categorías y unidades de medida.
 
-[¡Obtén más información aquí y empieza hoy mismo!](https://codigosdeprogramacion.com/2021/09/02/sistema-de-punto-de-venta-cdp-3)
+[¡Obtén más información aquí!](https://codigosdeprogramacion.com/2021/09/02/sistema-de-punto-de-venta-cdp-3)
 
 ## Requisitos
 
