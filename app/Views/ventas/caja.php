@@ -171,6 +171,7 @@ $this->section('script');
             if (nFilas < 2) {
                 $('#modalito').modal('show');
             } else {
+                $(this).prop('disabled', true);
                 $("#form_venta").submit();
             }
         });
