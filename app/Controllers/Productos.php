@@ -51,7 +51,7 @@ class Productos extends BaseController
             'codigo' => ['label' => 'código', 'rules' => 'required|is_unique[productos.codigo]'],
             'nombre' => 'required',
             'precio' => 'required|greater_than[0]',
-            'existencia' => 'numeric'
+            'existencia' => 'numeric|greater_than_equal_to[0]'
         ];
 
         if (!$this->validate($reglas)) {
@@ -94,7 +94,7 @@ class Productos extends BaseController
             'codigo' => ['label' => 'código', 'rules' => "required|is_unique[productos.codigo,id,{$id}]"],
             'nombre' => 'required',
             'precio' => 'required|greater_than[0]',
-            'existencia' => 'numeric'
+            'existencia' => 'numeric|greater_than_equal_to[0]'
         ];
 
         if (!$this->validate($reglas)) {
@@ -117,7 +117,7 @@ class Productos extends BaseController
     // Elimina producto
     public function delete($id = null)
     {
-        if (!$id == null) {
+        if ($id !== null) {
             $this->productosModel->update($id, [
                 'activo' => 0
             ]);
@@ -129,7 +129,7 @@ class Productos extends BaseController
     // Reingresa producto
     public function reingresar($id = null)
     {
-        if (!$id == null) {
+        if ($id !== null) {
             $this->productosModel->update($id, [
                 'activo' => 1
             ]);

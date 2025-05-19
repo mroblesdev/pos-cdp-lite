@@ -44,8 +44,10 @@ class ProductosModel extends Model
 
         $query = $this->select('id, codigo, nombre')
             ->where('activo', 1)
+            ->groupStart()
             ->like('codigo', $codigoNombre)
             ->orLike('nombre', $codigoNombre)
+            ->groupEnd()
             ->orderBy('codigo', 'ASC')
             ->limit(10)
             ->get();
