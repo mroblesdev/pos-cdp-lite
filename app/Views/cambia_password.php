@@ -1,7 +1,7 @@
 <?php
 
 $this->extend('plantilla/layout');
-$this->section('contentido');
+$this->section('contenido');
 
 ?>
 

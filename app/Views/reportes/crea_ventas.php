@@ -12,7 +12,7 @@
 
 $this->extend('plantilla/layout');
 
-$this->section('contentido');
+$this->section('contenido');
 ?>
 
 <h4 class="mt-3">Reporte de ventas</h4>

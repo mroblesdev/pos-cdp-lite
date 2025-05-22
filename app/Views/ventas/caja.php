@@ -34,7 +34,7 @@ $this->section('style');
 
 <?php
 $this->endSection();
-$this->section('contentido');
+$this->section('contenido');
 ?>
 
 <div class="row mt-4">

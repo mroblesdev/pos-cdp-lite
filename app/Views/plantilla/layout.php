@@ -52,7 +52,7 @@
         <div id="layoutSidenav_content">
             <main>
                 <div class="container-fluid px-4">
-                    <?php $this->renderSection('contentido'); ?>
+                    <?php $this->renderSection('contenido'); ?>
                 </div>
             </main>
             <footer class="py-4 bg-light mt-auto">
