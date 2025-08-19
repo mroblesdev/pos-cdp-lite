@@ -197,6 +197,19 @@ class Ventas extends BaseController
     public function cancelar($id)
     {
         $this->ventasModel->update($id, ['activo' => 0]);
+
+        $detalleVentasModel = new DetalleVentasModel();
+        $productosModel     = new ProductosModel();
+
+        $detalleVenta = $detalleVentasModel->where('venta_id', $id)->findAll();
+
+        foreach ($detalleVenta as $productoTmp) {
+            $datosProducto = $productosModel->where('id', $productoTmp['producto_id'])->first();
+            if ($datosProducto['inventariable'] == 1) {
+                $productosModel->actualizaStock($productoTmp['producto_id'], $productoTmp['cantidad'], '+');
+            }
+        }
+
         return redirect()->to(base_url('ventas'));
     }
 }
