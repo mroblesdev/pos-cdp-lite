@@ -67,7 +67,7 @@
                 </div>
             </main>
         </div>
-        <b class="text-end pe-4">Ver. Lite 1.1.0 &nbsp; </b>
+        <b class="text-end pe-4">Ver. Lite 1.1.2 &nbsp; </b>
         <div id="layoutAuthentication_footer">
             <footer class="py-4 bg-light mt-auto">
                 <div class="container-fluid px-3">
