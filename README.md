@@ -70,6 +70,9 @@ php spark migrate
 
 php spark db:seed CargaSeeder
 ```
+**Alternativamente**, puedes importar el archivo `pos-cdp-lite.sql` ubicado en la carpeta `app/Database` a tu base de datos utilizando phpMyAdmin o cualquier otra herramienta de gestión de bases de datos.
+Al importar el archivo SQL, se crearán las tablas necesarias y se cargarán los datos iniciales.
+
 
 ### 4. Ejecutar la aplicación:
 ```
