@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of CodeIgniter 4 framework.
  *
@@ -129,9 +131,9 @@ if (! function_exists('entities_to_ascii')) {
      */
     function entities_to_ascii(string $str, bool $all = true): string
     {
-        if (preg_match_all('/\&#(\d+)\;/', $str, $matches)) {
+        if (preg_match_all('/\&#(\d+)\;/', $str, $matches) >= 1) {
             for ($i = 0, $s = count($matches[0]); $i < $s; $i++) {
-                $digits = $matches[1][$i];
+                $digits = (int) $matches[1][$i];
                 $out    = '';
                 if ($digits < 128) {
                     $out .= chr($digits);
@@ -150,7 +152,7 @@ if (! function_exists('entities_to_ascii')) {
             return str_replace(
                 ['&amp;', '&lt;', '&gt;', '&quot;', '&apos;', '&#45;'],
                 ['&', '<', '>', '"', "'", '-'],
-                $str
+                $str,
             );
         }
 
@@ -191,9 +193,9 @@ if (! function_exists('word_censor')) {
                 $str = preg_replace(
                     "/({$delim})(" . $badword . ")({$delim})/i",
                     "\\1{$replacement}\\3",
-                    $str
+                    $str,
                 );
-            } elseif (preg_match_all("/{$delim}(" . $badword . "){$delim}/i", $str, $matches, PREG_PATTERN_ORDER | PREG_OFFSET_CAPTURE)) {
+            } elseif (preg_match_all("/{$delim}(" . $badword . "){$delim}/i", $str, $matches, PREG_PATTERN_ORDER | PREG_OFFSET_CAPTURE) >= 1) {
                 $matches = $matches[1];
 
                 for ($i = count($matches) - 1; $i >= 0; $i--) {
@@ -203,7 +205,7 @@ if (! function_exists('word_censor')) {
                         $str,
                         str_repeat('#', $length),
                         $matches[$i][1],
-                        $length
+                        $length,
                     );
                 }
             }
@@ -233,7 +235,7 @@ if (! function_exists('highlight_code')) {
         $str = str_replace(
             ['&lt;', '&gt;', '<?', '?>', '<%', '%>', '\\', '</script>'],
             ['<', '>', 'phptagopen', 'phptagclose', 'asptagopen', 'asptagclose', 'backslashtmp', 'scriptclose'],
-            $str
+            $str,
         );
 
         // The highlight_string function requires that the text be surrounded
@@ -252,7 +254,7 @@ if (! function_exists('highlight_code')) {
                 "$1</span>\n</span>\n</code>",
                 '',
             ],
-            $str
+            $str,
         );
 
         // Replace our markers back to PHP tags.
@@ -273,7 +275,7 @@ if (! function_exists('highlight_code')) {
                 '\\',
                 '&lt;/script&gt;',
             ],
-            $str
+            $str,
         );
     }
 }
@@ -308,7 +310,7 @@ if (! function_exists('convert_accented_characters')) {
         if (! is_array($arrayFrom)) {
             $config = new ForeignCharacters();
 
-            if (empty($config->characterList) || ! is_array($config->characterList)) {
+            if ($config->characterList === [] || ! is_array($config->characterList)) {
                 $arrayFrom = [];
                 $arrayTo   = [];
 
@@ -341,7 +343,7 @@ if (! function_exists('word_wrap')) {
         $str = preg_replace('| +|', ' ', $str);
 
         // Standardize newlines
-        if (strpos($str, "\r") !== false) {
+        if (str_contains($str, "\r")) {
             $str = str_replace(["\r\n", "\r"], "\n", $str);
         }
 
@@ -349,7 +351,7 @@ if (! function_exists('word_wrap')) {
         // strip the entire chunk and replace it with a marker.
         $unwrap = [];
 
-        if (preg_match_all('|\{unwrap\}(.+?)\{/unwrap\}|s', $str, $matches)) {
+        if (preg_match_all('|\{unwrap\}(.+?)\{/unwrap\}|s', $str, $matches) >= 1) {
             for ($i = 0, $c = count($matches[0]); $i < $c; $i++) {
                 $unwrap[] = $matches[1][$i];
                 $str      = str_replace($matches[0][$i], '{{unwrapped' . $i . '}}', $str);
@@ -524,9 +526,10 @@ if (! function_exists('reduce_multiples')) {
      */
     function reduce_multiples(string $str, string $character = ',', bool $trim = false): string
     {
-        $str = preg_replace('#' . preg_quote($character, '#') . '{2,}#', $character, $str);
+        $pattern = '#' . preg_quote($character, '#') . '{2,}#';
+        $str     = preg_replace($pattern, $character, $str);
 
-        return ($trim) ? trim($str, $character) : $str;
+        return $trim ? trim($str, $character) : $str;
     }
 }
 
@@ -578,7 +581,7 @@ if (! function_exists('random_string')) {
             case 'crypto':
                 if ($len % 2 !== 0) {
                     throw new InvalidArgumentException(
-                        'You must set an even number to the second parameter when you use `crypto`.'
+                        'You must set an even number to the second parameter when you use `crypto`.',
                     );
                 }
 
@@ -608,7 +611,7 @@ if (! function_exists('_from_random')) {
     {
         if ($length <= 0) {
             throw new InvalidArgumentException(
-                sprintf('A strictly positive length is expected, "%d" given.', $length)
+                sprintf('A strictly positive length is expected, "%d" given.', $length),
             );
         }
 
@@ -616,7 +619,7 @@ if (! function_exists('_from_random')) {
         $bits     = (int) ceil(log($poolSize, 2.0));
         if ($bits <= 0 || $bits > 56) {
             throw new InvalidArgumentException(
-                'The length of the alphabet must in the [2^1, 2^56] range.'
+                'The length of the alphabet must in the [2^1, 2^56] range.',
             );
         }
 
@@ -738,7 +741,7 @@ if (! function_exists('excerpt')) {
             $count = ++$count + strlen($s);
         }
 
-        $ellPre = $phrase ? $ellipsis : '';
+        $ellPre = $phrase !== null ? $ellipsis : '';
 
         return str_replace('  ', ' ', $ellPre . $prev . $phrase . $post . $ellipsis);
     }

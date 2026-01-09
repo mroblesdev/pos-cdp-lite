@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of CodeIgniter 4 framework.
  *
@@ -96,7 +98,7 @@ class Table
 
         $prefix = $this->db->DBPrefix;
 
-        if (! empty($prefix) && strpos($table, $prefix) === 0) {
+        if (! empty($prefix) && str_starts_with($table, $prefix)) {
             $table = substr($table, strlen($prefix));
         }
 
@@ -111,7 +113,7 @@ class Table
         $this->keys = array_merge($this->keys, $this->formatKeys($this->db->getIndexData($table)));
 
         // if primary key index exists twice then remove psuedo index name 'primary'.
-        $primaryIndexes = array_filter($this->keys, static fn ($index) => $index['type'] === 'primary');
+        $primaryIndexes = array_filter($this->keys, static fn ($index): bool => $index['type'] === 'primary');
 
         if ($primaryIndexes !== [] && count($primaryIndexes) > 1 && array_key_exists('primary', $this->keys)) {
             unset($this->keys['primary']);
@@ -200,7 +202,7 @@ class Table
      */
     public function dropPrimaryKey(): Table
     {
-        $primaryIndexes = array_filter($this->keys, static fn ($index) => strtolower($index['type']) === 'primary');
+        $primaryIndexes = array_filter($this->keys, static fn ($index): bool => strtolower($index['type']) === 'primary');
 
         foreach (array_keys($primaryIndexes) as $key) {
             unset($this->keys[$key]);
@@ -233,7 +235,7 @@ class Table
      */
     public function addPrimaryKey(array $fields): Table
     {
-        $primaryIndexes = array_filter($this->keys, static fn ($index) => strtolower($index['type']) === 'primary');
+        $primaryIndexes = array_filter($this->keys, static fn ($index): bool => strtolower($index['type']) === 'primary');
 
         // if primary key already exists we can't add another one
         if ($primaryIndexes !== []) {
@@ -306,7 +308,7 @@ class Table
 
         $this->keys = array_filter(
             $this->keys,
-            static fn ($index) => count(array_intersect($index['fields'], $fieldNames)) === count($index['fields'])
+            static fn ($index): bool => count(array_intersect($index['fields'], $fieldNames)) === count($index['fields']),
         );
 
         // Unique/Index keys
@@ -332,7 +334,7 @@ class Table
             $this->forge->addForeignKey(
                 $foreignKey->column_name,
                 trim($foreignKey->foreign_table_name, $this->db->DBPrefix),
-                $foreignKey->foreign_column_name
+                $foreignKey->foreign_column_name,
             );
         }
 
@@ -356,15 +358,15 @@ class Table
 
         $exFields = implode(
             ', ',
-            array_map(fn ($item) => $this->db->protectIdentifiers($item), $exFields)
+            array_map(fn ($item) => $this->db->protectIdentifiers($item), $exFields),
         );
         $newFields = implode(
             ', ',
-            array_map(fn ($item) => $this->db->protectIdentifiers($item), $newFields)
+            array_map(fn ($item) => $this->db->protectIdentifiers($item), $newFields),
         );
 
         $this->db->query(
-            "INSERT INTO {$this->prefixedTableName}({$newFields}) SELECT {$exFields} FROM {$this->db->DBPrefix}temp_{$this->tableName}"
+            "INSERT INTO {$this->prefixedTableName}({$newFields}) SELECT {$exFields} FROM {$this->db->DBPrefix}temp_{$this->tableName}",
         );
     }
 
@@ -430,7 +432,7 @@ class Table
      */
     private function isIntegerType(string $type): bool
     {
-        return strpos(strtoupper($type), 'INT') !== false;
+        return str_contains(strtoupper($type), 'INT');
     }
 
     /**

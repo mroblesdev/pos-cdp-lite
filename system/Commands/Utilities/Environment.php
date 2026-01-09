@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of CodeIgniter 4 framework.
  *
@@ -149,7 +151,7 @@ final class Environment extends BaseCommand
 
         return file_put_contents(
             $envFile,
-            preg_replace($pattern, "\nCI_ENVIRONMENT = {$newEnv}", file_get_contents($envFile), -1, $count)
+            preg_replace($pattern, "\nCI_ENVIRONMENT = {$newEnv}", file_get_contents($envFile), -1, $count),
         ) !== false && $count > 0;
     }
 }

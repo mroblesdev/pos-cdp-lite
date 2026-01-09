@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of CodeIgniter 4 framework.
  *
@@ -59,7 +61,7 @@ abstract class BaseExceptionHandler
         RequestInterface $request,
         ResponseInterface $response,
         int $statusCode,
-        int $exitCode
+        int $exitCode,
     );
 
     /**
@@ -81,8 +83,8 @@ abstract class BaseExceptionHandler
         }
 
         return [
-            'title'   => get_class($exception),
-            'type'    => get_class($exception),
+            'title'   => $exception::class,
+            'type'    => $exception::class,
             'code'    => $statusCode,
             'message' => $exception->getMessage(),
             'file'    => $exception->getFile(),
@@ -114,7 +116,7 @@ abstract class BaseExceptionHandler
             $explode = explode('/', $keyToMask);
             $index   = end($explode);
 
-            if (strpos(strrev($path . '/' . $index), strrev($keyToMask)) === 0) {
+            if (str_starts_with(strrev($path . '/' . $index), strrev($keyToMask))) {
                 if (is_array($args) && array_key_exists($index, $args)) {
                     $args[$index] = '******************';
                 } elseif (
@@ -176,7 +178,7 @@ abstract class BaseExceptionHandler
 
         try {
             $source = file_get_contents($file);
-        } catch (Throwable $e) {
+        } catch (Throwable) {
             return false;
         }
 
@@ -219,7 +221,7 @@ abstract class BaseExceptionHandler
                     "<span class='line highlight'><span class='number'>{$format}</span> %s\n</span>%s",
                     $n + $start + 1,
                     strip_tags($row),
-                    implode('', $tags[0])
+                    implode('', $tags[0]),
                 );
             } else {
                 $out .= sprintf('<span class="line"><span class="number">' . $format . '</span> %s', $n + $start + 1, $row) . "\n";
@@ -243,8 +245,14 @@ abstract class BaseExceptionHandler
      */
     protected function render(Throwable $exception, int $statusCode, $viewFile = null): void
     {
-        if (empty($viewFile) || ! is_file($viewFile)) {
-            echo 'The error view files were not found. Cannot render exception trace.';
+        if ($viewFile === null) {
+            echo 'The error view file was not specified. Cannot display error view.';
+
+            exit(1);
+        }
+
+        if (! is_file($viewFile)) {
+            echo 'The error view file "' . $viewFile . '" was not found. Cannot display error view.';
 
             exit(1);
         }

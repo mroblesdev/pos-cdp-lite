@@ -73,7 +73,7 @@ $this->section('contenido');
             </div>
             <div class="modal-footer">
                 <form action="" method="post" id="form-elimina">
-                    <input type="hidden" name="_method" value="delete">
+                    <input type="hidden" name="_method" value="DELETE">
                     <?= csrf_field(); ?>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                     <button type="submit" class="btn btn-danger">Sí, cancelar</button>

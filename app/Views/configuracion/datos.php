@@ -23,7 +23,7 @@ $this->section('contenido');
 <?php endif ?>
 
 <form class="row g-3" method="post" action="<?= base_url('datos'); ?>" autocomplete="off">
-    <input type="hidden" name="_method" value="put">
+    <input type="hidden" name="_method" value="PUT">
     <?= csrf_field(); ?>
 
     <div class="col-md-7">

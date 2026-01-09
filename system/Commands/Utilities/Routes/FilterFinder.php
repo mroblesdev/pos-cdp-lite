@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of CodeIgniter 4 framework.
  *
@@ -13,10 +15,10 @@ namespace CodeIgniter\Commands\Utilities\Routes;
 
 use CodeIgniter\Exceptions\PageNotFoundException;
 use CodeIgniter\Filters\Filters;
+use CodeIgniter\HTTP\Exceptions\BadRequestException;
 use CodeIgniter\HTTP\Exceptions\RedirectException;
 use CodeIgniter\Router\Router;
 use Config\Feature;
-use Config\Services;
 
 /**
  * Finds filters.
@@ -25,25 +27,18 @@ use Config\Services;
  */
 final class FilterFinder
 {
-    private Router $router;
-    private Filters $filters;
+    private readonly Router $router;
+    private readonly Filters $filters;
 
     public function __construct(?Router $router = null, ?Filters $filters = null)
     {
-        $this->router  = $router ?? Services::router();
-        $this->filters = $filters ?? Services::filters();
+        $this->router  = $router ?? service('router');
+        $this->filters = $filters ?? service('filters');
     }
 
     private function getRouteFilters(string $uri): array
     {
         $this->router->handle($uri);
-
-        $multipleFiltersEnabled = config(Feature::class)->multipleFilters ?? false;
-        if (! $multipleFiltersEnabled) {
-            $filter = $this->router->getFilter();
-
-            return $filter === null ? [] : [$filter];
-        }
 
         return $this->router->getFilters();
     }
@@ -60,22 +55,45 @@ final class FilterFinder
         // Add route filters
         try {
             $routeFilters = $this->getRouteFilters($uri);
+
             $this->filters->enableFilters($routeFilters, 'before');
+
+            $oldFilterOrder = config(Feature::class)->oldFilterOrder ?? false;
+            if (! $oldFilterOrder) {
+                $routeFilters = array_reverse($routeFilters);
+            }
+
             $this->filters->enableFilters($routeFilters, 'after');
 
             $this->filters->initialize($uri);
 
             return $this->filters->getFilters();
-        } catch (RedirectException $e) {
+        } catch (RedirectException) {
             return [
                 'before' => [],
                 'after'  => [],
             ];
-        } catch (PageNotFoundException $e) {
+        } catch (BadRequestException|PageNotFoundException) {
             return [
                 'before' => ['<unknown>'],
                 'after'  => ['<unknown>'],
             ];
         }
+    }
+
+    /**
+     * Returns Required Filters
+     *
+     * @return array{before: list<string>, after:list<string>}
+     */
+    public function getRequiredFilters(): array
+    {
+        [$requiredBefore] = $this->filters->getRequiredFilters('before');
+        [$requiredAfter]  = $this->filters->getRequiredFilters('after');
+
+        return [
+            'before' => $requiredBefore,
+            'after'  => $requiredAfter,
+        ];
     }
 }

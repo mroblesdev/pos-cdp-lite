@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of CodeIgniter 4 framework.
  *
@@ -43,7 +45,7 @@ abstract class Migration
     {
         if (isset($this->DBGroup)) {
             $this->forge = Database::forge($this->DBGroup);
-        } elseif ($forge !== null) {
+        } elseif ($forge instanceof Forge) {
             $this->forge = $forge;
         } else {
             $this->forge = Database::forge(config(Database::class)->defaultGroup);

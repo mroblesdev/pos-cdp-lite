@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of CodeIgniter 4 framework.
  *
@@ -22,16 +24,10 @@ use ReflectionMethod;
 final class ControllerMethodReader
 {
     /**
-     * @var string the default namespace
-     */
-    private string $namespace;
-
-    /**
      * @param string $namespace the default namespace
      */
-    public function __construct(string $namespace)
+    public function __construct(private readonly string $namespace)
     {
-        $this->namespace = $namespace;
     }
 
     /**
@@ -61,7 +57,7 @@ final class ControllerMethodReader
                 $defaultController,
                 $uriByClass,
                 $classname,
-                $methodName
+                $methodName,
             );
             $output = [...$output, ...$routeWithoutController];
 
@@ -93,7 +89,7 @@ final class ControllerMethodReader
                     $defaultController,
                     $uriByClass,
                     $classname,
-                    $methodName
+                    $methodName,
                 );
                 $output = [...$output, ...$routeWithoutController];
 
@@ -157,7 +153,7 @@ final class ControllerMethodReader
         string $defaultController,
         string $uriByClass,
         string $classname,
-        string $methodName
+        string $methodName,
     ): array {
         if ($classShortname !== $defaultController) {
             return [];
@@ -165,7 +161,7 @@ final class ControllerMethodReader
 
         $pattern                = '#' . preg_quote(lcfirst($defaultController), '#') . '\z#';
         $routeWithoutController = rtrim(preg_replace($pattern, '', $uriByClass), '/');
-        $routeWithoutController = $routeWithoutController ?: '/';
+        $routeWithoutController = $routeWithoutController !== '' && $routeWithoutController !== '0' ? $routeWithoutController : '/';
 
         return [[
             'route'   => $routeWithoutController,

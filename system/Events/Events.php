@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of CodeIgniter 4 framework.
  *
@@ -12,7 +14,6 @@
 namespace CodeIgniter\Events;
 
 use Config\Modules;
-use Config\Services;
 
 /**
  * Events
@@ -75,15 +76,15 @@ class Events
             return;
         }
 
-        $config = config(Modules::class);
+        $config = new Modules();
         $events = APPPATH . 'Config' . DIRECTORY_SEPARATOR . 'Events.php';
         $files  = [];
 
         if ($config->shouldDiscover('events')) {
-            $files = Services::locator()->search('Config/Events.php');
+            $files = service('locator')->search('Config/Events.php');
         }
 
-        $files = array_filter(array_map(static function (string $file) {
+        $files = array_filter(array_map(static function (string $file): false|string {
             if (is_file($file)) {
                 return realpath($file) ?: $file;
             }
@@ -211,7 +212,7 @@ class Events
             if ($check === $listener) {
                 unset(
                     static::$listeners[$eventName][1][$index],
-                    static::$listeners[$eventName][2][$index]
+                    static::$listeners[$eventName][2][$index],
                 );
 
                 return true;

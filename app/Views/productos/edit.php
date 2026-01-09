@@ -17,7 +17,7 @@ $this->section('contenido');
 
 <form class="row g-3" method="post" action="<?= base_url('productos/' . $producto['id']); ?>" autocomplete="off">
     <?= csrf_field(); ?>
-    <input type="hidden" name="_method" value="put">
+    <input type="hidden" name="_method" value="PUT">
     <input type="hidden" name="id" value="<?= $producto['id'] ?>">
 
     <div class="col-md-3">

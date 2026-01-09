@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of CodeIgniter 4 framework.
  *
@@ -236,7 +238,7 @@ abstract class CIUnitTestCase extends TestCase
     {
         parent::setUp();
 
-        if (! $this->app) {
+        if (! $this->app instanceof CodeIgniter) {
             $this->app = $this->createApplication();
         }
 
@@ -359,7 +361,7 @@ abstract class CIUnitTestCase extends TestCase
         $this->assertTrue($result, sprintf(
             'Failed asserting that expected message "%s" with level "%s" was logged.',
             $expectedMessage ?? '',
-            $level
+            $level,
         ));
 
         return $result;
@@ -372,11 +374,11 @@ abstract class CIUnitTestCase extends TestCase
     {
         $this->assertTrue(
             TestLogger::didLog($level, $logMessage, false),
-            $message ?: sprintf(
+            $message !== '' ? $message : sprintf(
                 'Failed asserting that logs have a record of message containing "%s" with level "%s".',
                 $logMessage,
-                $level
-            )
+                $level,
+            ),
         );
     }
 
@@ -415,7 +417,7 @@ abstract class CIUnitTestCase extends TestCase
     {
         $this->assertNotNull(
             $this->getHeaderEmitted($header, $ignoreCase, __METHOD__),
-            "Didn't find header for {$header}"
+            "Didn't find header for {$header}",
         );
     }
 
@@ -429,7 +431,7 @@ abstract class CIUnitTestCase extends TestCase
     {
         $this->assertNull(
             $this->getHeaderEmitted($header, $ignoreCase, __METHOD__),
-            "Found header for {$header}"
+            "Found header for {$header}",
         );
     }
 
@@ -439,7 +441,7 @@ abstract class CIUnitTestCase extends TestCase
      * where the result is close but not exactly equal to the
      * expected time, for reasons beyond our control.
      *
-     * @param mixed $actual
+     * @param float|int $actual
      *
      * @throws Exception
      */
@@ -477,7 +479,7 @@ abstract class CIUnitTestCase extends TestCase
             $difference = abs($expected - $actual);
 
             $this->assertLessThanOrEqual($tolerance, $difference, $message);
-        } catch (Exception $e) {
+        } catch (Exception) {
             return false;
         }
     }
@@ -495,7 +497,7 @@ abstract class CIUnitTestCase extends TestCase
     protected function createApplication()
     {
         // Initialize the autoloader.
-        Services::autoloader()->initialize(new Autoload(), new Modules());
+        service('autoloader')->initialize(new Autoload(), new Modules());
 
         $app = new MockCodeIgniter(new App());
         $app->initialize();
@@ -514,8 +516,8 @@ abstract class CIUnitTestCase extends TestCase
 
         foreach (xdebug_get_headers() as $emittedHeader) {
             $found = $ignoreCase
-                ? (stripos($emittedHeader, $header) === 0)
-                : (strpos($emittedHeader, $header) === 0);
+                ? (str_starts_with(strtolower($emittedHeader), strtolower($header)))
+                : (str_starts_with($emittedHeader, $header));
 
             if ($found) {
                 return $emittedHeader;

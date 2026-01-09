@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of CodeIgniter 4 framework.
  *
@@ -40,7 +42,7 @@ class ImageMagickHandler extends BaseHandler
     {
         parent::__construct($config);
 
-        if (! (extension_loaded('imagick') || class_exists(Imagick::class))) {
+        if (! extension_loaded('imagick') && ! class_exists(Imagick::class)) {
             throw ImageException::forMissingExtension('IMAGICK'); // @codeCoverageIgnore
         }
 
@@ -79,7 +81,7 @@ class ImageMagickHandler extends BaseHandler
             $escape = '';
         }
 
-        $action = $maintainRatio === true
+        $action = $maintainRatio
             ? ' -resize ' . ($this->width ?? 0) . 'x' . ($this->height ?? 0) . ' "' . $source . '" "' . $destination . '"'
             : ' -resize ' . ($this->width ?? 0) . 'x' . ($this->height ?? 0) . "{$escape}! \"" . $source . '" "' . $destination . '"';
 
@@ -327,8 +329,6 @@ class ImageMagickHandler extends BaseHandler
     /**
      * Handler-specific method for overlaying text on an image.
      *
-     * @return void
-     *
      * @throws Exception
      */
     protected function _text(string $text, array $options = [])
@@ -453,30 +453,15 @@ class ImageMagickHandler extends BaseHandler
     {
         $orientation = $this->getEXIF('Orientation', $silent);
 
-        switch ($orientation) {
-            case 2:
-                return $this->flip('horizontal');
-
-            case 3:
-                return $this->rotate(180);
-
-            case 4:
-                return $this->rotate(180)->flip('horizontal');
-
-            case 5:
-                return $this->rotate(90)->flip('horizontal');
-
-            case 6:
-                return $this->rotate(90);
-
-            case 7:
-                return $this->rotate(270)->flip('horizontal');
-
-            case 8:
-                return $this->rotate(270);
-
-            default:
-                return $this;
-        }
+        return match ($orientation) {
+            2       => $this->flip('horizontal'),
+            3       => $this->rotate(180),
+            4       => $this->rotate(180)->flip('horizontal'),
+            5       => $this->rotate(90)->flip('horizontal'),
+            6       => $this->rotate(90),
+            7       => $this->rotate(270)->flip('horizontal'),
+            8       => $this->rotate(270),
+            default => $this,
+        };
     }
 }

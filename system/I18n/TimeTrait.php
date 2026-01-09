@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of CodeIgniter 4 framework.
  *
@@ -71,7 +73,7 @@ trait TimeTrait
      */
     public function __construct(?string $time = null, $timezone = null, ?string $locale = null)
     {
-        $this->locale = $locale ?: Locale::getDefault();
+        $this->locale = $locale !== null && $locale !== '' && $locale !== '0' ? $locale : Locale::getDefault();
 
         $time ??= '';
 
@@ -220,7 +222,7 @@ trait TimeTrait
         ?int $minutes = null,
         ?int $seconds = null,
         $timezone = null,
-        ?string $locale = null
+        ?string $locale = null,
     ) {
         $year ??= date('Y');
         $month ??= date('m');
@@ -552,7 +554,7 @@ trait TimeTrait
     public function setMonth($value)
     {
         if (is_numeric($value) && ($value < 1 || $value > 12)) {
-            throw I18nException::forInvalidMonth($value);
+            throw I18nException::forInvalidMonth((string) $value);
         }
 
         if (is_string($value) && ! is_numeric($value)) {
@@ -574,13 +576,13 @@ trait TimeTrait
     public function setDay($value)
     {
         if ($value < 1 || $value > 31) {
-            throw I18nException::forInvalidDay($value);
+            throw I18nException::forInvalidDay((string) $value);
         }
 
         $date    = $this->getYear() . '-' . $this->getMonth();
         $lastDay = date('t', strtotime($date));
         if ($value > $lastDay) {
-            throw I18nException::forInvalidOverDay($lastDay, $value);
+            throw I18nException::forInvalidOverDay($lastDay, (string) $value);
         }
 
         return $this->setValue('day', $value);
@@ -598,7 +600,7 @@ trait TimeTrait
     public function setHour($value)
     {
         if ($value < 0 || $value > 23) {
-            throw I18nException::forInvalidHour($value);
+            throw I18nException::forInvalidHour((string) $value);
         }
 
         return $this->setValue('hour', $value);
@@ -616,7 +618,7 @@ trait TimeTrait
     public function setMinute($value)
     {
         if ($value < 0 || $value > 59) {
-            throw I18nException::forInvalidMinutes($value);
+            throw I18nException::forInvalidMinutes((string) $value);
         }
 
         return $this->setValue('minute', $value);
@@ -634,7 +636,7 @@ trait TimeTrait
     public function setSecond($value)
     {
         if ($value < 0 || $value > 59) {
-            throw I18nException::forInvalidSeconds($value);
+            throw I18nException::forInvalidSeconds((string) $value);
         }
 
         return $this->setValue('second', $value);
@@ -663,7 +665,7 @@ trait TimeTrait
             (int) $minute,
             (int) $second,
             $this->getTimezoneName(),
-            $this->locale
+            $this->locale,
         );
     }
 
@@ -956,7 +958,7 @@ trait TimeTrait
         if ($testTime instanceof DateTimeInterface) {
             $testTime = $testTime->format('Y-m-d H:i:s');
         } elseif (is_string($testTime)) {
-            $timezone = $timezone ?: $this->timezone;
+            $timezone = $timezone !== null && $timezone !== '' && $timezone !== '0' ? $timezone : $this->timezone;
             $timezone = $timezone instanceof DateTimeZone ? $timezone : new DateTimeZone($timezone);
             $testTime = new DateTime($testTime, $timezone);
             $testTime = $testTime->format('Y-m-d H:i:s');
@@ -1017,7 +1019,7 @@ trait TimeTrait
      */
     public function humanize()
     {
-        $now  = IntlCalendar::fromDateTime(self::now($this->timezone));
+        $now  = IntlCalendar::fromDateTime(self::now($this->timezone)->toDateTime());
         $time = $this->getCalendar()->getTime();
 
         $years   = $now->fieldDifference($time, IntlCalendar::FIELD_YEAR);
@@ -1106,7 +1108,7 @@ trait TimeTrait
         if ($time instanceof self) {
             $time = $time->toDateTime();
         } elseif (is_string($time)) {
-            $timezone = $timezone ?: $this->timezone;
+            $timezone = $timezone !== null && $timezone !== '' && $timezone !== '0' ? $timezone : $this->timezone;
             $timezone = $timezone instanceof DateTimeZone ? $timezone : new DateTimeZone($timezone);
             $time     = new DateTime($time, $timezone);
         }
@@ -1131,7 +1133,7 @@ trait TimeTrait
      */
     public function getCalendar()
     {
-        return IntlCalendar::fromDateTime($this);
+        return IntlCalendar::fromDateTime($this->toDateTime());
     }
 
     /**

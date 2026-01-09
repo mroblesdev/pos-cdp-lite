@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of CodeIgniter 4 framework.
  *
@@ -19,13 +21,8 @@
  */
 
 // @codeCoverageIgnoreStart
-// Avoid this file run when listing commands
-if (PHP_SAPI === 'cli') {
-    return;
-}
-
 $uri = urldecode(
-    parse_url('https://codeigniter.com' . $_SERVER['REQUEST_URI'], PHP_URL_PATH) ?? ''
+    parse_url('https://codeigniter.com' . $_SERVER['REQUEST_URI'], PHP_URL_PATH) ?? '',
 );
 
 // All request handle by index.php file.

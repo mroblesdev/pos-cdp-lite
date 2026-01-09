@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of CodeIgniter 4 framework.
  *
@@ -37,7 +39,7 @@ class Negotiate
      */
     public function __construct(?RequestInterface $request = null)
     {
-        if ($request !== null) {
+        if ($request instanceof RequestInterface) {
             assert($request instanceof IncomingRequest);
 
             $this->request = $request;
@@ -88,7 +90,7 @@ class Negotiate
             $supported,
             $this->request->getHeaderLine('accept-charset'),
             false,
-            true
+            true,
         );
 
         // If no charset is shown as a match, ignore the directive
@@ -152,7 +154,7 @@ class Negotiate
         ?string $header = null,
         bool $enforceTypes = false,
         bool $strictMatch = false,
-        bool $matchLocales = false
+        bool $matchLocales = false,
     ): string {
         if ($supported === []) {
             throw HTTPException::forEmptySupportedNegotiations();
@@ -210,7 +212,7 @@ class Negotiate
                 if (preg_match(
                     '/^(?P<name>.+?)=(?P<quoted>"|\')?(?P<value>.*?)(?:\k<quoted>)?$/',
                     $pair,
-                    $param
+                    $param,
                 )) {
                     $parameters[trim($param['name'])] = trim($param['value']);
                 }
@@ -231,7 +233,7 @@ class Negotiate
         }
 
         // Sort to get the highest results first
-        usort($results, static function ($a, $b) {
+        usort($results, static function ($a, $b): int {
             if ($a['q'] === $b['q']) {
                 $aAst = substr_count($a['value'], '*');
                 $bAst = substr_count($b['value'], '*');

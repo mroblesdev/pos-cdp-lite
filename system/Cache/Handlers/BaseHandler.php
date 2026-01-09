@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of CodeIgniter 4 framework.
  *
@@ -65,7 +67,7 @@ abstract class BaseHandler implements CacheInterface
         }
 
         $reserved = config(Cache::class)->reservedCharacters ?? self::RESERVED_CHARACTERS;
-        if ($reserved && strpbrk($key, $reserved) !== false) {
+        if ($reserved !== '' && strpbrk($key, $reserved) !== false) {
             throw new InvalidArgumentException('Cache key contains reserved characters ' . $reserved);
         }
 

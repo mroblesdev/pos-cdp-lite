@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of CodeIgniter 4 framework.
  *
@@ -15,7 +17,6 @@ use CodeIgniter\HTTP\SiteURI;
 use CodeIgniter\HTTP\URI;
 use CodeIgniter\Router\Exceptions\RouterException;
 use Config\App;
-use Config\Services;
 
 // CodeIgniter URL Helpers
 
@@ -31,7 +32,7 @@ if (! function_exists('site_url')) {
      */
     function site_url($relativePath = '', ?string $scheme = null, ?App $config = null): string
     {
-        $currentURI = Services::request()->getUri();
+        $currentURI = service('request')->getUri();
 
         assert($currentURI instanceof SiteURI);
 
@@ -51,7 +52,7 @@ if (! function_exists('base_url')) {
      */
     function base_url($relativePath = '', ?string $scheme = null): string
     {
-        $currentURI = Services::request()->getUri();
+        $currentURI = service('request')->getUri();
 
         assert($currentURI instanceof SiteURI);
 
@@ -71,7 +72,7 @@ if (! function_exists('current_url')) {
      */
     function current_url(bool $returnObject = false, ?IncomingRequest $request = null)
     {
-        $request ??= Services::request();
+        $request ??= service('request');
         /** @var CLIRequest|IncomingRequest $request */
         $uri = $request->getUri();
 
@@ -111,9 +112,9 @@ if (! function_exists('uri_string')) {
      */
     function uri_string(): string
     {
-        // The value of Services::request()->getUri()->getPath() returns
+        // The value of service('request')->getUri()->getPath() returns
         // full URI path.
-        $uri = Services::request()->getUri();
+        $uri = service('request')->getUri();
 
         $path = $uri instanceof SiteURI ? $uri->getRoutePath() : $uri->getPath();
 
@@ -209,6 +210,8 @@ if (! function_exists('anchor_popup')) {
         } else {
             $windowName = '_blank';
         }
+
+        $atts = [];
 
         foreach (['width' => '800', 'height' => '600', 'scrollbars' => 'yes', 'menubar' => 'no', 'status' => 'yes', 'resizable' => 'yes', 'screenx' => '0', 'screeny' => '0'] as $key => $val) {
             $atts[$key] = $attributes[$key] ?? $val;
@@ -350,7 +353,15 @@ if (! function_exists('auto_link')) {
     function auto_link(string $str, string $type = 'both', bool $popup = false): string
     {
         // Find and replace any URLs.
-        if ($type !== 'email' && preg_match_all('#(\w*://|www\.)[^\s()<>;]+\w#i', $str, $matches, PREG_OFFSET_CAPTURE | PREG_SET_ORDER)) {
+        if (
+            $type !== 'email'
+            && preg_match_all(
+                '#([a-z][a-z0-9+\-.]*://|www\.)[a-z0-9]+(-+[a-z0-9]+)*(\.[a-z0-9]+(-+[a-z0-9]+)*)+(/([^\s()<>;]+\w)?/?)?#i',
+                $str,
+                $matches,
+                PREG_OFFSET_CAPTURE | PREG_SET_ORDER,
+            ) >= 1
+        ) {
             // Set our target HTML if using popup links.
             $target = ($popup) ? ' target="_blank"' : '';
 
@@ -369,7 +380,15 @@ if (! function_exists('auto_link')) {
         }
 
         // Find and replace any emails.
-        if ($type !== 'url' && preg_match_all('#([\w\.\-\+]+@[a-z0-9\-]+\.[a-z0-9\-\.]+[^[:punct:]\s])#i', $str, $matches, PREG_OFFSET_CAPTURE)) {
+        if (
+            $type !== 'url'
+            && preg_match_all(
+                '#([\w\.\-\+]+@[a-z0-9\-]+\.[a-z0-9\-\.]+[^[:punct:]\s])#i',
+                $str,
+                $matches,
+                PREG_OFFSET_CAPTURE,
+            ) >= 1
+        ) {
             foreach (array_reverse($matches[0]) as $match) {
                 if (filter_var($match[0], FILTER_VALIDATE_EMAIL) !== false) {
                     $str = substr_replace($str, safe_mailto($match[0]), $match[1], strlen($match[0]));
@@ -439,7 +458,7 @@ if (! function_exists('url_title')) {
             $str = preg_replace('#' . $key . '#iu', $val, $str);
         }
 
-        if ($lowercase === true) {
+        if ($lowercase) {
             $str = mb_strtolower($str);
         }
 

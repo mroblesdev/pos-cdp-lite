@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of CodeIgniter 4 framework.
  *
@@ -146,7 +148,7 @@ class PagerRenderer
             $uri->getAuthority(),
             $uri->getPath(),
             $uri->getQuery(),
-            $uri->getFragment()
+            $uri->getFragment(),
         );
     }
 
@@ -184,7 +186,7 @@ class PagerRenderer
             $uri->getAuthority(),
             $uri->getPath(),
             $uri->getQuery(),
-            $uri->getFragment()
+            $uri->getFragment(),
         );
     }
 
@@ -206,7 +208,7 @@ class PagerRenderer
             $uri->getAuthority(),
             $uri->getPath(),
             $uri->getQuery(),
-            $uri->getFragment()
+            $uri->getFragment(),
         );
     }
 
@@ -228,7 +230,7 @@ class PagerRenderer
             $uri->getAuthority(),
             $uri->getPath(),
             $uri->getQuery(),
-            $uri->getFragment()
+            $uri->getFragment(),
         );
     }
 
@@ -250,7 +252,7 @@ class PagerRenderer
             $uri->getAuthority(),
             $uri->getPath(),
             $uri->getQuery(),
-            $uri->getFragment()
+            $uri->getFragment(),
         );
     }
 
@@ -276,7 +278,7 @@ class PagerRenderer
                     $uri->getAuthority(),
                     $uri->getPath(),
                     $uri->getQuery(),
-                    $uri->getFragment()
+                    $uri->getFragment(),
                 ),
                 'title'  => $i,
                 'active' => ($i === $this->current),
@@ -339,7 +341,7 @@ class PagerRenderer
             $uri->getAuthority(),
             $uri->getPath(),
             $uri->getQuery(),
-            $uri->getFragment()
+            $uri->getFragment(),
         );
     }
 
@@ -377,7 +379,7 @@ class PagerRenderer
             $uri->getAuthority(),
             $uri->getPath(),
             $uri->getQuery(),
-            $uri->getFragment()
+            $uri->getFragment(),
         );
     }
 

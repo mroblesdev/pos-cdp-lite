@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of CodeIgniter 4 framework.
  *
@@ -26,7 +28,7 @@ class Console
     /**
      * Runs the current command discovered on the CLI.
      *
-     * @return int|void
+     * @return int|void Exit code
      *
      * @throws Exception
      */
@@ -61,7 +63,7 @@ class Console
             'CodeIgniter v%s Command Line Tool - Server Time: %s UTC%s',
             CodeIgniter::CI_VERSION,
             date('Y-m-d H:i:s'),
-            date('P')
+            date('P'),
         ), 'green');
         CLI::newLine();
     }

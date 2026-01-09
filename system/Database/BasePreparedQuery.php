@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of CodeIgniter 4 framework.
  *
@@ -175,7 +177,7 @@ abstract class BasePreparedQuery implements PreparedQueryInterface
         // Let others do something with this query
         Events::trigger('DBQuery', $query);
 
-        if ($this->db->isWriteType($query)) {
+        if ($this->db->isWriteType((string) $query)) {
             return true;
         }
 
@@ -256,5 +258,13 @@ abstract class BasePreparedQuery implements PreparedQueryInterface
     public function getErrorMessage(): string
     {
         return $this->errorString;
+    }
+
+    /**
+     * Whether the input contain binary data.
+     */
+    protected function isBinary(string $input): bool
+    {
+        return mb_detect_encoding($input, 'UTF-8', true) === false;
     }
 }

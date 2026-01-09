@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of CodeIgniter 4 framework.
  *
@@ -16,7 +18,6 @@ use CodeIgniter\Cookie\CookieStore;
 use CodeIgniter\HTTP\Exceptions\HTTPException;
 use Config\App;
 use Config\Cookie as CookieConfig;
-use Config\Services;
 
 /**
  * Representation of an outgoing, server-side response.
@@ -146,17 +147,17 @@ class Response extends Message implements ResponseInterface
      * @param App $config
      *
      * @todo Recommend removing reliance on config injection
+     *
+     * @deprecated 4.5.0 The param $config is no longer used.
      */
-    public function __construct($config)
+    public function __construct($config) // @phpstan-ignore-line
     {
         // Default to a non-caching page.
         // Also ensures that a Cache-control header exists.
         $this->noCache();
 
         // We need CSP object even if not enabled to avoid calls to non existing methods
-        $this->CSP = Services::csp();
-
-        $this->CSPEnabled = $config->CSPEnabled;
+        $this->CSP = service('csp');
 
         $this->cookieStore = new CookieStore([]);
 

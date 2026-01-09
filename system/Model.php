@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of CodeIgniter 4 framework.
  *
@@ -22,12 +24,10 @@ use CodeIgniter\Database\Exceptions\DataException;
 use CodeIgniter\Database\Query;
 use CodeIgniter\Entity\Entity;
 use CodeIgniter\Exceptions\ModelException;
-use CodeIgniter\I18n\Time;
 use CodeIgniter\Validation\ValidationInterface;
 use Config\Database;
-use ReflectionClass;
+use Config\Feature;
 use ReflectionException;
-use ReflectionProperty;
 use stdClass;
 
 /**
@@ -40,7 +40,7 @@ use stdClass;
  *      - allow intermingling calls to the builder
  *      - removes the need to use Result object directly in most cases
  *
- * @property BaseConnection $db
+ * @property-read BaseConnection $db
  *
  * @method $this groupBy($by, ?bool $escape = null)
  * @method $this groupEnd()
@@ -123,7 +123,8 @@ class Model extends BaseModel
      * so that we can capture it (not the builder)
      * and ensure it gets validated first.
      *
-     * @var array
+     * @var         array{escape: array, data: array}|array{}
+     * @phpstan-var array{escape: array<int|string, bool|null>, data: row_array}|array{}
      */
     protected $tempData = [];
 
@@ -173,7 +174,7 @@ class Model extends BaseModel
     }
 
     /**
-     * Fetches the row of database from $this->table with a primary key
+     * Fetches the row(s) of database from $this->table with a primary key
      * matching $id.
      * This method works only with dbCalls.
      *
@@ -187,12 +188,21 @@ class Model extends BaseModel
     {
         $builder = $this->builder();
 
+        $useCast = $this->useCasts();
+        if ($useCast) {
+            $returnType = $this->tempReturnType;
+            $this->asArray();
+        }
+
         if ($this->tempUseSoftDeletes) {
             $builder->where($this->table . '.' . $this->deletedField, null);
         }
 
+        $row  = null;
+        $rows = [];
+
         if (is_array($id)) {
-            $row = $builder->whereIn($this->table . '.' . $this->primaryKey, $id)
+            $rows = $builder->whereIn($this->table . '.' . $this->primaryKey, $id)
                 ->get()
                 ->getResult($this->tempReturnType);
         } elseif ($singleton) {
@@ -200,10 +210,32 @@ class Model extends BaseModel
                 ->get()
                 ->getFirstRow($this->tempReturnType);
         } else {
-            $row = $builder->get()->getResult($this->tempReturnType);
+            $rows = $builder->get()->getResult($this->tempReturnType);
         }
 
-        return $row;
+        if ($useCast) {
+            $this->tempReturnType = $returnType;
+
+            if ($singleton) {
+                if ($row === null) {
+                    return null;
+                }
+
+                return $this->convertToReturnType($row, $returnType);
+            }
+
+            foreach ($rows as $i => $row) {
+                $rows[$i] = $this->convertToReturnType($row, $returnType);
+            }
+
+            return $rows;
+        }
+
+        if ($singleton) {
+            return $row;
+        }
+
+        return $rows;
     }
 
     /**
@@ -225,23 +257,44 @@ class Model extends BaseModel
      * all results, while optionally limiting them.
      * This method works only with dbCalls.
      *
-     * @param int $limit  Limit
-     * @param int $offset Offset
+     * @param int|null $limit  Limit
+     * @param int      $offset Offset
      *
      * @return         array
      * @phpstan-return list<row_array|object>
      */
-    protected function doFindAll(int $limit = 0, int $offset = 0)
+    protected function doFindAll(?int $limit = null, int $offset = 0)
     {
+        $limitZeroAsAll = config(Feature::class)->limitZeroAsAll ?? true;
+        if ($limitZeroAsAll) {
+            $limit ??= 0;
+        }
+
         $builder = $this->builder();
+
+        $useCast = $this->useCasts();
+        if ($useCast) {
+            $returnType = $this->tempReturnType;
+            $this->asArray();
+        }
 
         if ($this->tempUseSoftDeletes) {
             $builder->where($this->table . '.' . $this->deletedField, null);
         }
 
-        return $builder->limit($limit, $offset)
+        $results = $builder->limit($limit, $offset)
             ->get()
             ->getResult($this->tempReturnType);
+
+        if ($useCast) {
+            foreach ($results as $i => $row) {
+                $results[$i] = $this->convertToReturnType($row, $returnType);
+            }
+
+            $this->tempReturnType = $returnType;
+        }
+
+        return $results;
     }
 
     /**
@@ -256,19 +309,33 @@ class Model extends BaseModel
     {
         $builder = $this->builder();
 
+        $useCast = $this->useCasts();
+        if ($useCast) {
+            $returnType = $this->tempReturnType;
+            $this->asArray();
+        }
+
         if ($this->tempUseSoftDeletes) {
             $builder->where($this->table . '.' . $this->deletedField, null);
-        } elseif ($this->useSoftDeletes && ($builder->QBGroupBy === []) && $this->primaryKey) {
+        } elseif ($this->useSoftDeletes && ($builder->QBGroupBy === []) && $this->primaryKey !== '') {
             $builder->groupBy($this->table . '.' . $this->primaryKey);
         }
 
         // Some databases, like PostgreSQL, need order
         // information to consistently return correct results.
-        if ($builder->QBGroupBy && ($builder->QBOrderBy === []) && $this->primaryKey) {
+        if ($builder->QBGroupBy !== [] && ($builder->QBOrderBy === []) && $this->primaryKey !== '') {
             $builder->orderBy($this->table . '.' . $this->primaryKey, 'asc');
         }
 
-        return $builder->limit(1, 0)->get()->getFirstRow($this->tempReturnType);
+        $row = $builder->limit(1, 0)->get()->getFirstRow($this->tempReturnType);
+
+        if ($useCast && $row !== null) {
+            $row = $this->convertToReturnType($row, $returnType);
+
+            $this->tempReturnType = $returnType;
+        }
+
+        return $row;
     }
 
     /**
@@ -306,17 +373,17 @@ class Model extends BaseModel
                 $allFields = $this->db->protectIdentifiers(
                     array_map(
                         static fn ($row) => $row->name,
-                        $this->db->getFieldData($this->table)
+                        $this->db->getFieldData($this->table),
                     ),
                     false,
-                    true
+                    true,
                 );
 
                 $sql = sprintf(
                     'INSERT INTO %s (%s) VALUES (%s)',
                     $table,
                     implode(',', $allFields),
-                    substr(str_repeat(',DEFAULT', count($allFields)), 1)
+                    substr(str_repeat(',DEFAULT', count($allFields)), 1),
                 );
             } else {
                 $sql = 'INSERT INTO ' . $table . ' DEFAULT VALUES';
@@ -376,7 +443,7 @@ class Model extends BaseModel
 
         $builder = $this->builder();
 
-        if ($id) {
+        if (! in_array($id, [null, '', 0, '0', []], true)) {
             $builder = $builder->whereIn($this->table . '.' . $this->primaryKey, $id);
         }
 
@@ -387,7 +454,7 @@ class Model extends BaseModel
 
         if ($builder->getCompiledQBWhere() === []) {
             throw new DatabaseException(
-                'Updates are not allowed unless they contain a "where" or "like" clause.'
+                'Updates are not allowed unless they contain a "where" or "like" clause.',
             );
         }
 
@@ -429,14 +496,14 @@ class Model extends BaseModel
         $set     = [];
         $builder = $this->builder();
 
-        if ($id) {
+        if (! in_array($id, [null, '', 0, '0', []], true)) {
             $builder = $builder->whereIn($this->primaryKey, $id);
         }
 
         if ($this->useSoftDeletes && ! $purge) {
             if ($builder->getCompiledQBWhere() === []) {
                 throw new DatabaseException(
-                    'Deletes are not allowed unless they contain a "where" or "like" clause.'
+                    'Deletes are not allowed unless they contain a "where" or "like" clause.',
                 );
             }
 
@@ -512,21 +579,7 @@ class Model extends BaseModel
             return [];
         }
 
-        return [get_class($this->db) => $error['message']];
-    }
-
-    /**
-     * Returns the id value for the data array or object
-     *
-     * @param array|object $data Data
-     *
-     * @return array|int|string|null
-     *
-     * @deprecated Use getIdValue() instead. Will be removed in version 5.0.
-     */
-    protected function idValue($data)
-    {
-        return $this->getIdValue($data);
+        return [$this->db::class => $error['message']];
     }
 
     /**
@@ -539,9 +592,9 @@ class Model extends BaseModel
      */
     public function getIdValue($row)
     {
-        if (is_object($row) && isset($row->{$this->primaryKey})) {
-            // Get the raw primary key value of the Entity.
-            if ($row instanceof Entity) {
+        if (is_object($row)) {
+            // Get the raw or mapped primary key value of the Entity.
+            if ($row instanceof Entity && $row->{$this->primaryKey} !== null) {
                 $cast = $row->cast();
 
                 // Disable Entity casting, because raw primary key value is needed for database.
@@ -555,7 +608,9 @@ class Model extends BaseModel
                 return $primaryKey;
             }
 
-            return $row->{$this->primaryKey};
+            if (! $row instanceof Entity && isset($row->{$this->primaryKey})) {
+                return $row->{$this->primaryKey};
+            }
         }
 
         if (is_array($row) && isset($row[$this->primaryKey])) {
@@ -570,10 +625,6 @@ class Model extends BaseModel
      * Works with $this->builder to get the Compiled select to
      * determine the rows to operate on.
      * This method works only with dbCalls.
-     *
-     * @return void
-     *
-     * @throws DataException
      */
     public function chunk(int $size, Closure $userFunc)
     {
@@ -639,7 +690,7 @@ class Model extends BaseModel
         // Check for an existing Builder
         if ($this->builder instanceof BaseBuilder) {
             // Make sure the requested table matches the builder
-            if ($table && $this->builder->getTable() !== $table) {
+            if ((string) $table !== '' && $this->builder->getTable() !== $table) {
                 return $this->db->table($table);
             }
 
@@ -653,7 +704,7 @@ class Model extends BaseModel
             throw ModelException::forNoPrimaryKey(static::class);
         }
 
-        $table = ($table === null || $table === '') ? $this->table : $table;
+        $table = ((string) $table === '') ? $this->table : $table;
 
         // Ensure we have a good db connection
         if (! $this->db instanceof BaseConnection) {
@@ -819,7 +870,7 @@ class Model extends BaseModel
      * @param object $object    Object
      * @param bool   $recursive If true, inner entities will be cast as array as well
      *
-     * @return array<string, mixed>
+     * @return array<string, mixed> Array with raw values.
      *
      * @throws ReflectionException
      */
@@ -894,71 +945,5 @@ class Model extends BaseModel
         if (in_array($name, $this->builderMethodsNotAvailable, true)) {
             throw ModelException::forMethodNotAvailable(static::class, $name . '()');
         }
-    }
-
-    /**
-     * Takes a class an returns an array of it's public and protected
-     * properties as an array suitable for use in creates and updates.
-     *
-     * @param object|string $data
-     * @param string|null   $primaryKey
-     *
-     * @throws ReflectionException
-     *
-     * @codeCoverageIgnore
-     *
-     * @deprecated 4.1.0
-     */
-    public static function classToArray($data, $primaryKey = null, string $dateFormat = 'datetime', bool $onlyChanged = true): array
-    {
-        if (method_exists($data, 'toRawArray')) {
-            $properties = $data->toRawArray($onlyChanged);
-
-            // Always grab the primary key otherwise updates will fail.
-            if ($properties !== [] && isset($primaryKey) && ! in_array($primaryKey, $properties, true) && isset($data->{$primaryKey})) {
-                $properties[$primaryKey] = $data->{$primaryKey};
-            }
-        } else {
-            $mirror = new ReflectionClass($data);
-            $props  = $mirror->getProperties(ReflectionProperty::IS_PUBLIC | ReflectionProperty::IS_PROTECTED);
-
-            $properties = [];
-
-            // Loop over each property,
-            // saving the name/value in a new array we can return.
-            foreach ($props as $prop) {
-                // Must make protected values accessible.
-                $prop->setAccessible(true);
-                $properties[$prop->getName()] = $prop->getValue($data);
-            }
-        }
-
-        // Convert any Time instances to appropriate $dateFormat
-        if ($properties) {
-            foreach ($properties as $key => $value) {
-                if ($value instanceof Time) {
-                    switch ($dateFormat) {
-                        case 'datetime':
-                            $converted = $value->format('Y-m-d H:i:s');
-                            break;
-
-                        case 'date':
-                            $converted = $value->format('Y-m-d');
-                            break;
-
-                        case 'int':
-                            $converted = $value->getTimestamp();
-                            break;
-
-                        default:
-                            $converted = (string) $value;
-                    }
-
-                    $properties[$key] = $converted;
-                }
-            }
-        }
-
-        return $properties;
     }
 }

@@ -57,7 +57,7 @@ $this->section('contenido');
             </div>
             <div class="modal-footer">
                 <form action="" method="post" id="form-reingresa">
-                    <input type="hidden" name="_method" value="put">
+                    <input type="hidden" name="_method" value="PUT">
                     <?= csrf_field(); ?>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                     <button type="submit" class="btn btn-success">Reingresar</button>

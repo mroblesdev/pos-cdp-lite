@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of CodeIgniter 4 framework.
  *
@@ -44,7 +46,7 @@ final class PhpStreamWrapper
         stream_wrapper_restore('php');
     }
 
-    public function stream_open(string $path): bool
+    public function stream_open(): bool
     {
         return true;
     }
