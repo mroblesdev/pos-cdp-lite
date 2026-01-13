@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace CodeIgniter\Database\Exceptions;
 
 use CodeIgniter\Exceptions\DebugTraceableTrait;
-use RuntimeException;
+use CodeIgniter\Exceptions\RuntimeException;
 
 class DataException extends RuntimeException implements ExceptionInterface
 {
@@ -65,21 +65,33 @@ class DataException extends RuntimeException implements ExceptionInterface
         return new static(lang('Database.invalidArgument', [$argument]));
     }
 
+    /**
+     * @return DataException
+     */
     public static function forInvalidAllowedFields(string $model)
     {
         return new static(lang('Database.invalidAllowedFields', [$model]));
     }
 
+    /**
+     * @return DataException
+     */
     public static function forTableNotFound(string $table)
     {
         return new static(lang('Database.tableNotFound', [$table]));
     }
 
+    /**
+     * @return DataException
+     */
     public static function forEmptyInputGiven(string $argument)
     {
         return new static(lang('Database.forEmptyInputGiven', [$argument]));
     }
 
+    /**
+     * @return DataException
+     */
     public static function forFindColumnHaveMultipleColumns()
     {
         return new static(lang('Database.forFindColumnHaveMultipleColumns'));

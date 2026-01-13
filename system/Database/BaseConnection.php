@@ -206,16 +206,14 @@ abstract class BaseConnection implements ConnectionInterface
     /**
      * Connection ID
      *
-     * @var         false|object|resource
-     * @phpstan-var false|TConnection
+     * @var false|TConnection
      */
     public $connID = false;
 
     /**
      * Result ID
      *
-     * @var         false|object|resource
-     * @phpstan-var false|TResult
+     * @var false|TResult
      */
     public $resultID = false;
 
@@ -340,7 +338,7 @@ abstract class BaseConnection implements ConnectionInterface
     /**
      * Array of table aliases.
      *
-     * @var array
+     * @var list<string>
      */
     protected $aliasedTables = [];
 
@@ -498,8 +496,7 @@ abstract class BaseConnection implements ConnectionInterface
     /**
      * Create a persistent database connection.
      *
-     * @return         false|object|resource
-     * @phpstan-return false|TConnection
+     * @return false|TConnection
      */
     public function persistentConnect()
     {
@@ -512,8 +509,7 @@ abstract class BaseConnection implements ConnectionInterface
      * get that connection. If you pass either alias in and only a single
      * connection is present, it must return the sole connection.
      *
-     * @return         false|object|resource
-     * @phpstan-return TConnection
+     * @return false|TConnection
      */
     public function getConnection(?string $alias = null)
     {
@@ -576,10 +572,14 @@ abstract class BaseConnection implements ConnectionInterface
      *
      * @return $this
      */
-    public function addTableAlias(string $table)
+    public function addTableAlias(string $alias)
     {
-        if (! in_array($table, $this->aliasedTables, true)) {
-            $this->aliasedTables[] = $table;
+        if ($alias === '') {
+            return $this;
+        }
+
+        if (! in_array($alias, $this->aliasedTables, true)) {
+            $this->aliasedTables[] = $alias;
         }
 
         return $this;
@@ -588,8 +588,7 @@ abstract class BaseConnection implements ConnectionInterface
     /**
      * Executes the query against the database.
      *
-     * @return         false|object|resource
-     * @phpstan-return false|TResult
+     * @return false|TResult
      */
     abstract protected function execute(string $sql);
 
@@ -603,8 +602,7 @@ abstract class BaseConnection implements ConnectionInterface
      *
      * @param array|string|null $binds
      *
-     * @return         BaseResult|bool|Query                       BaseResult when “read” type query, bool when “write” type query, Query when prepared query
-     * @phpstan-return BaseResult<TConnection, TResult>|bool|Query
+     * @return BaseResult<TConnection, TResult>|bool|Query
      *
      * @todo BC set $queryClass default as null in 4.1
      */
@@ -654,9 +652,7 @@ abstract class BaseConnection implements ConnectionInterface
             $query->setDuration($startTime, $startTime);
 
             // This will trigger a rollback if transactions are being used
-            if ($this->transDepth !== 0) {
-                $this->transStatus = false;
-            }
+            $this->handleTransStatus();
 
             if (
                 $this->DBDebug
@@ -722,8 +718,7 @@ abstract class BaseConnection implements ConnectionInterface
      * is performed, nor are transactions handled. Simply takes a raw
      * query string and returns the database-specific result id.
      *
-     * @return         false|object|resource
-     * @phpstan-return false|TResult
+     * @return false|TResult
      */
     public function simpleQuery(string $sql)
     {
@@ -898,6 +893,28 @@ abstract class BaseConnection implements ConnectionInterface
     }
 
     /**
+     * Reset transaction status - to restart transactions after strict mode failure
+     */
+    public function resetTransStatus(): static
+    {
+        $this->transStatus = true;
+
+        return $this;
+    }
+
+    /**
+     * Handle transaction status when a query fails
+     *
+     * @internal This method is for internal database component use only
+     */
+    public function handleTransStatus(): void
+    {
+        if ($this->transDepth !== 0) {
+            $this->transStatus = false;
+        }
+    }
+
+    /**
      * Begin Transaction
      */
     abstract protected function _transBegin(): bool;
@@ -915,7 +932,7 @@ abstract class BaseConnection implements ConnectionInterface
     /**
      * Returns a non-shared new instance of the query builder for this connection.
      *
-     * @param array|string $tableName
+     * @param array|string|TableName $tableName
      *
      * @return BaseBuilder
      *
@@ -1046,13 +1063,12 @@ abstract class BaseConnection implements ConnectionInterface
      * insert the table prefix (if it exists) in the proper position, and escape only
      * the correct identifiers.
      *
-     * @param array|int|string $item
-     * @param bool             $prefixSingle       Prefix a table name with no segments?
-     * @param bool             $protectIdentifiers Protect table or column names?
-     * @param bool             $fieldExists        Supplied $item contains a column name?
+     * @param array|int|string|TableName $item
+     * @param bool                       $prefixSingle       Prefix a table name with no segments?
+     * @param bool                       $protectIdentifiers Protect table or column names?
+     * @param bool                       $fieldExists        Supplied $item contains a column name?
      *
-     * @return         array|string
-     * @phpstan-return ($item is array ? array : string)
+     * @return ($item is array ? array : string)
      */
     public function protectIdentifiers($item, bool $prefixSingle = false, ?bool $protectIdentifiers = null, bool $fieldExists = true)
     {
@@ -1068,6 +1084,11 @@ abstract class BaseConnection implements ConnectionInterface
             }
 
             return $escapedArray;
+        }
+
+        if ($item instanceof TableName) {
+            /** @psalm-suppress NoValue I don't know why ERROR. */
+            return $this->escapeTableName($item);
         }
 
         // If you pass `['column1', 'column2']`, `$item` will be int because the array keys are int.
@@ -1212,10 +1233,18 @@ abstract class BaseConnection implements ConnectionInterface
      *
      * This function escapes single identifier.
      *
-     * @param non-empty-string $item
+     * @param non-empty-string|TableName $item
      */
-    public function escapeIdentifier(string $item): string
+    public function escapeIdentifier($item): string
     {
+        if ($item === '') {
+            return '';
+        }
+
+        if ($item instanceof TableName) {
+            return $this->escapeTableName($item);
+        }
+
         return $this->escapeChar
             . str_replace(
                 $this->escapeChar,
@@ -1226,14 +1255,24 @@ abstract class BaseConnection implements ConnectionInterface
     }
 
     /**
+     * Returns escaped table name with alias.
+     */
+    private function escapeTableName(TableName $tableName): string
+    {
+        $alias = $tableName->getAlias();
+
+        return $this->escapeIdentifier($tableName->getActualTableName())
+            . (($alias !== '') ? ' ' . $this->escapeIdentifier($alias) : '');
+    }
+
+    /**
      * Escape the SQL Identifiers
      *
      * This function escapes column and table names
      *
      * @param array|string $item
      *
-     * @return         array|string
-     * @phpstan-return ($item is array ? array : string)
+     * @return ($item is array ? array : string)
      */
     public function escapeIdentifiers($item)
     {
@@ -1317,8 +1356,7 @@ abstract class BaseConnection implements ConnectionInterface
      *
      * @param array|bool|float|int|object|string|null $str
      *
-     * @return         array|float|int|string
-     * @phpstan-return ($str is array ? array : float|int|string)
+     * @return ($str is array ? array : float|int|string)
      */
     public function escape($str)
     {
@@ -1538,12 +1576,16 @@ abstract class BaseConnection implements ConnectionInterface
     /**
      * Fetch Field Names
      *
+     * @param string|TableName $tableName
+     *
      * @return false|list<string>
      *
      * @throws DatabaseException
      */
-    public function getFieldNames(string $table)
+    public function getFieldNames($tableName)
     {
+        $table = ($tableName instanceof TableName) ? $tableName->getTableName() : $tableName;
+
         // Is there a cached result?
         if (isset($this->dataCache['field_names'][$table])) {
             return $this->dataCache['field_names'][$table];
@@ -1553,7 +1595,7 @@ abstract class BaseConnection implements ConnectionInterface
             $this->initialize();
         }
 
-        if (false === ($sql = $this->_listColumns($table))) {
+        if (false === ($sql = $this->_listColumns($tableName))) {
             if ($this->DBDebug) {
                 throw new DatabaseException('This feature is not available for the database you are using.');
             }
@@ -1745,8 +1787,7 @@ abstract class BaseConnection implements ConnectionInterface
      *
      * Must return an array with keys 'code' and 'message':
      *
-     * @return         array<string, int|string|null>
-     * @phpstan-return array{code: int|string|null, message: string|null}
+     * @return array{code: int|string|null, message: string|null}
      */
     abstract public function error(): array;
 
@@ -1769,9 +1810,11 @@ abstract class BaseConnection implements ConnectionInterface
     /**
      * Generates a platform-specific query string so that the column names can be fetched.
      *
+     * @param string|TableName $table
+     *
      * @return false|string
      */
-    abstract protected function _listColumns(string $table = '');
+    abstract protected function _listColumns($table = '');
 
     /**
      * Platform-specific field data information.

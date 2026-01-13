@@ -15,6 +15,7 @@ namespace CodeIgniter\Database\SQLSRV;
 
 use CodeIgniter\Database\BaseConnection;
 use CodeIgniter\Database\Exceptions\DatabaseException;
+use CodeIgniter\Database\TableName;
 use stdClass;
 
 /**
@@ -225,12 +226,20 @@ class Connection extends BaseConnection
 
     /**
      * Generates a platform-specific query string so that the column names can be fetched.
+     *
+     * @param string|TableName $table
      */
-    protected function _listColumns(string $table = ''): string
+    protected function _listColumns($table = ''): string
     {
+        if ($table instanceof TableName) {
+            $tableName = $this->escape(strtolower($table->getActualTableName()));
+        } else {
+            $tableName = $this->escape($this->DBPrefix . strtolower($table));
+        }
+
         return 'SELECT [COLUMN_NAME] '
             . ' FROM [INFORMATION_SCHEMA].[COLUMNS]'
-            . ' WHERE  [TABLE_NAME] = ' . $this->escape($this->DBPrefix . $table)
+            . ' WHERE  [TABLE_NAME] = ' . $tableName
             . ' AND [TABLE_SCHEMA] = ' . $this->escape($this->schema);
     }
 
@@ -257,7 +266,7 @@ class Connection extends BaseConnection
             $obj->name = $row->index_name;
 
             $_fields     = explode(',', trim($row->index_keys));
-            $obj->fields = array_map(static fn ($v): string => trim($v), $_fields);
+            $obj->fields = array_map(trim(...), $_fields);
 
             if (str_contains($row->index_description, 'primary key located on')) {
                 $obj->type = 'PRIMARY';
@@ -375,10 +384,40 @@ class Connection extends BaseConnection
                 );
 
             $retVal[$i]->nullable = $query[$i]->IS_NULLABLE !== 'NO';
-            $retVal[$i]->default  = $query[$i]->COLUMN_DEFAULT;
+            $retVal[$i]->default  = $this->normalizeDefault($query[$i]->COLUMN_DEFAULT);
         }
 
         return $retVal;
+    }
+
+    /**
+     * Normalizes SQL Server COLUMN_DEFAULT values.
+     * Removes wrapping parentheses and handles basic conversions.
+     */
+    private function normalizeDefault(?string $default): ?string
+    {
+        if ($default === null) {
+            return null;
+        }
+
+        $default = trim($default);
+
+        // Remove outer parentheses (handles both single and double wrapping)
+        while (preg_match('/^\((.*)\)$/', $default, $matches)) {
+            $default = trim($matches[1]);
+        }
+
+        // Handle NULL literal
+        if (strcasecmp($default, 'NULL') === 0) {
+            return null;
+        }
+
+        // Handle string literals - remove quotes and unescape
+        if (preg_match("/^'(.*)'$/s", $default, $matches)) {
+            return str_replace("''", "'", $matches[1]);
+        }
+
+        return $default;
     }
 
     /**
@@ -552,11 +591,15 @@ class Connection extends BaseConnection
             return $this->dataCache['version'];
         }
 
-        if (! $this->connID || ($info = sqlsrv_server_info($this->connID)) === []) {
+        if (! $this->connID) {
             $this->initialize();
         }
 
-        return isset($info['SQLServerVersion']) ? $this->dataCache['version'] = $info['SQLServerVersion'] : false;
+        if (($info = sqlsrv_server_info($this->connID)) === []) {
+            return '';
+        }
+
+        return isset($info['SQLServerVersion']) ? $this->dataCache['version'] = $info['SQLServerVersion'] : '';
     }
 
     /**

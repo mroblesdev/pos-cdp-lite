@@ -13,11 +13,11 @@ declare(strict_types=1);
 
 namespace CodeIgniter\Test;
 
-use BadMethodCallException;
+use CodeIgniter\Exceptions\BadMethodCallException;
+use CodeIgniter\Exceptions\InvalidArgumentException;
 use DOMDocument;
 use DOMNodeList;
 use DOMXPath;
-use InvalidArgumentException;
 
 /**
  * Load a response into a DOMDocument for testing assertions based on that
@@ -233,10 +233,8 @@ class DOMParser
 
         // $paths might contain a number of different
         // ready to go xpath portions to tack on.
-        if ($paths !== [] && is_array($paths)) {
-            foreach ($paths as $extra) {
-                $path .= $extra;
-            }
+        foreach ($paths as $extra) {
+            $path .= $extra;
         }
 
         if ($search !== null) {

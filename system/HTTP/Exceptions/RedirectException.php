@@ -14,17 +14,17 @@ declare(strict_types=1);
 namespace CodeIgniter\HTTP\Exceptions;
 
 use CodeIgniter\Exceptions\HTTPExceptionInterface;
+use CodeIgniter\Exceptions\InvalidArgumentException;
+use CodeIgniter\Exceptions\LogicException;
+use CodeIgniter\Exceptions\RuntimeException;
 use CodeIgniter\HTTP\ResponsableInterface;
 use CodeIgniter\HTTP\ResponseInterface;
-use Exception;
-use InvalidArgumentException;
-use LogicException;
 use Throwable;
 
 /**
  * RedirectException
  */
-class RedirectException extends Exception implements ResponsableInterface, HTTPExceptionInterface
+class RedirectException extends RuntimeException implements ExceptionInterface, ResponsableInterface, HTTPExceptionInterface
 {
     /**
      * HTTP status code for redirects
@@ -51,7 +51,8 @@ class RedirectException extends Exception implements ResponsableInterface, HTTPE
 
         if ($message instanceof ResponseInterface) {
             $this->response = $message;
-            $message        = '';
+
+            $message = '';
 
             if ($this->response->getHeaderLine('Location') === '' && $this->response->getHeaderLine('Refresh') === '') {
                 throw new LogicException(
@@ -70,14 +71,19 @@ class RedirectException extends Exception implements ResponsableInterface, HTTPE
     public function getResponse(): ResponseInterface
     {
         if (! $this->response instanceof ResponseInterface) {
-            $this->response = service('response')
-                ->redirect(base_url($this->getMessage()), 'auto', $this->getCode());
+            $this->response = service('response')->redirect(
+                base_url($this->getMessage()),
+                'auto',
+                $this->getCode(),
+            );
         }
 
-        service('logger')->info(
-            'REDIRECTED ROUTE at '
-             . ($this->response->getHeaderLine('Location') ?: substr($this->response->getHeaderLine('Refresh'), 6)),
-        );
+        $location = $this->response->getHeaderLine('Location');
+
+        service('logger')->info(sprintf(
+            'REDIRECTED ROUTE at %s',
+            $location !== '' ? $location : substr($this->response->getHeaderLine('Refresh'), 6),
+        ));
 
         return $this->response;
     }

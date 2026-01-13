@@ -17,8 +17,8 @@ use CodeIgniter\Autoloader\FileLocator;
 use CodeIgniter\Autoloader\FileLocatorCached;
 use CodeIgniter\CLI\BaseCommand;
 use CodeIgniter\CLI\CLI;
+use CodeIgniter\Exceptions\RuntimeException;
 use CodeIgniter\Publisher\Publisher;
-use RuntimeException;
 
 /**
  * Optimize for production.
@@ -55,7 +55,7 @@ final class Optimize extends BaseCommand
     protected $usage = 'optimize';
 
     /**
-     * {@inheritDoc}
+     * @return int
      */
     public function run(array $params)
     {
@@ -63,13 +63,13 @@ final class Optimize extends BaseCommand
             $this->enableCaching();
             $this->clearCache();
             $this->removeDevPackages();
+
+            return EXIT_SUCCESS;
         } catch (RuntimeException) {
             CLI::error('The "spark optimize" failed.');
 
             return EXIT_ERROR;
         }
-
-        return EXIT_SUCCESS;
     }
 
     private function clearCache(): void

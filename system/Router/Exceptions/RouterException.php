@@ -18,7 +18,7 @@ use CodeIgniter\Exceptions\FrameworkException;
 /**
  * RouterException
  */
-class RouterException extends FrameworkException
+class RouterException extends FrameworkException implements ExceptionInterface
 {
     /**
      * Thrown when the actual parameter type does not match
@@ -28,7 +28,7 @@ class RouterException extends FrameworkException
      */
     public static function forInvalidParameterType()
     {
-        return new static(lang('Router.invalidParameterType'));
+        return new static(lang('Router.invalidParameter'));
     }
 
     /**

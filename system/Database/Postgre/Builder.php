@@ -16,7 +16,7 @@ namespace CodeIgniter\Database\Postgre;
 use CodeIgniter\Database\BaseBuilder;
 use CodeIgniter\Database\Exceptions\DatabaseException;
 use CodeIgniter\Database\RawSql;
-use InvalidArgumentException;
+use CodeIgniter\Exceptions\InvalidArgumentException;
 
 /**
  * Builder for Postgre
@@ -36,7 +36,7 @@ class Builder extends BaseBuilder
      * Specifies which sql statements
      * support the ignore option.
      *
-     * @var array
+     * @var array<string, string>
      */
     protected $supportedIgnoreStatements = [
         'insert' => 'ON CONFLICT DO NOTHING',
@@ -469,9 +469,8 @@ class Builder extends BaseBuilder
                     return ($index->type === 'UNIQUE' || $index->type === 'PRIMARY') && $hasAllFields;
                 });
 
-                foreach (array_map(static fn ($index) => $index->fields, $allIndexes) as $index) {
-                    $constraints[] = current($index);
-                    // only one index can be used?
+                foreach ($allIndexes as $index) {
+                    $constraints = $index->fields;
                     break;
                 }
 

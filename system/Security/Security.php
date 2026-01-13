@@ -14,6 +14,8 @@ declare(strict_types=1);
 namespace CodeIgniter\Security;
 
 use CodeIgniter\Cookie\Cookie;
+use CodeIgniter\Exceptions\InvalidArgumentException;
+use CodeIgniter\Exceptions\LogicException;
 use CodeIgniter\HTTP\IncomingRequest;
 use CodeIgniter\HTTP\Method;
 use CodeIgniter\HTTP\Request;
@@ -24,8 +26,6 @@ use CodeIgniter\Session\Session;
 use Config\Cookie as CookieConfig;
 use Config\Security as SecurityConfig;
 use ErrorException;
-use InvalidArgumentException;
-use LogicException;
 
 /**
  * Class Security
@@ -427,59 +427,16 @@ class Security implements SecurityInterface
      * e.g. file/in/some/approved/folder.txt, you can set the second optional
      * parameter, $relativePath to TRUE.
      *
+     * @deprecated 4.6.2 Use `sanitize_filename()` instead
+     *
      * @param string $str          Input file name
      * @param bool   $relativePath Whether to preserve paths
      */
     public function sanitizeFilename(string $str, bool $relativePath = false): string
     {
-        // List of sanitize filename strings
-        $bad = [
-            '../',
-            '<!--',
-            '-->',
-            '<',
-            '>',
-            "'",
-            '"',
-            '&',
-            '$',
-            '#',
-            '{',
-            '}',
-            '[',
-            ']',
-            '=',
-            ';',
-            '?',
-            '%20',
-            '%22',
-            '%3c',
-            '%253c',
-            '%3e',
-            '%0e',
-            '%28',
-            '%29',
-            '%2528',
-            '%26',
-            '%24',
-            '%3f',
-            '%3b',
-            '%3d',
-        ];
+        helper('security');
 
-        if (! $relativePath) {
-            $bad[] = './';
-            $bad[] = '/';
-        }
-
-        $str = remove_invisible_characters($str, false);
-
-        do {
-            $old = $str;
-            $str = str_replace($bad, '', $str);
-        } while ($old !== $str);
-
-        return stripslashes($str);
+        return sanitize_filename($str, $relativePath);
     }
 
     /**

@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace CodeIgniter;
 
-use BadMethodCallException;
 use Closure;
 use CodeIgniter\Database\BaseBuilder;
 use CodeIgniter\Database\BaseConnection;
@@ -23,6 +22,7 @@ use CodeIgniter\Database\Exceptions\DatabaseException;
 use CodeIgniter\Database\Exceptions\DataException;
 use CodeIgniter\Database\Query;
 use CodeIgniter\Entity\Entity;
+use CodeIgniter\Exceptions\BadMethodCallException;
 use CodeIgniter\Exceptions\ModelException;
 use CodeIgniter\Validation\ValidationInterface;
 use Config\Database;
@@ -396,7 +396,7 @@ class Model extends BaseModel
 
         // If insertion succeeded then save the insert ID
         if ($result) {
-            $this->insertID = ! $this->useAutoIncrement ? $row[$this->primaryKey] : $this->db->insertID();
+            $this->insertID = $this->useAutoIncrement ? $this->db->insertID() : $row[$this->primaryKey];
         }
 
         return $result;
@@ -551,9 +551,8 @@ class Model extends BaseModel
      * Compiles a replace into string and runs the query
      * This method works only with dbCalls.
      *
-     * @param         array|null     $row       Data
-     * @phpstan-param row_array|null $row
-     * @param         bool           $returnSQL Set to true to return Query String
+     * @param row_array|null $row       Data
+     * @param bool           $returnSQL Set to true to return Query String
      *
      * @return BaseResult|false|Query|string
      */
@@ -774,12 +773,10 @@ class Model extends BaseModel
      * Inserts data into the database. If an object is provided,
      * it will attempt to convert it to an array.
      *
-     * @param         array|object|null     $row
-     * @phpstan-param row_array|object|null $row
-     * @param         bool                  $returnID Whether insert ID should be returned or not.
+     * @param object|row_array|null $row
+     * @param bool                  $returnID Whether insert ID should be returned or not.
      *
-     * @return         bool|int|string
-     * @phpstan-return ($returnID is true ? int|string|false : bool)
+     * @return ($returnID is true ? false|int|string : bool)
      *
      * @throws ReflectionException
      */

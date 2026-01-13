@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace CodeIgniter\CLI;
 
 use CodeIgniter\CLI\Exceptions\CLIException;
-use InvalidArgumentException;
+use CodeIgniter\Exceptions\InvalidArgumentException;
 use Throwable;
 
 /**
@@ -107,12 +107,12 @@ class CLI
     /**
      * List of array segments.
      *
-     * @var array
+     * @var list<string>
      */
     protected static $segments = [];
 
     /**
-     * @var array
+     * @var array<string, string|null>
      */
     protected static $options = [];
 
@@ -318,11 +318,7 @@ class CLI
         if ($opts === []) {
             $extraOutput = $extraOutputDefault;
         } else {
-            $optsKey = [];
-
-            foreach (array_keys($opts) as $key) {
-                $optsKey[] = $key;
-            }
+            $optsKey     = array_keys($opts);
             $extraOutput = '[' . $extraOutputDefault . ', ' . implode(', ', $optsKey) . ']';
             $extraOutput = 'You can specify multiple values separated by commas.' . PHP_EOL . $extraOutput;
         }
@@ -944,6 +940,8 @@ class CLI
 
     /**
      * Returns the raw array of segments found.
+     *
+     * @return list<string>
      */
     public static function getSegments(): array
     {
@@ -971,6 +969,8 @@ class CLI
 
     /**
      * Returns the raw array of options found.
+     *
+     * @return array<string, string|null>
      */
     public static function getOptions(): array
     {

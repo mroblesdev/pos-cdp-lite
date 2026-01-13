@@ -13,9 +13,10 @@ declare(strict_types=1);
 
 namespace CodeIgniter\Config;
 
+use CodeIgniter\Autoloader\FileLocatorInterface;
 use CodeIgniter\Database\ConnectionInterface;
+use CodeIgniter\Exceptions\InvalidArgumentException;
 use CodeIgniter\Model;
-use InvalidArgumentException;
 
 /**
  * Factories for creating instances.
@@ -299,6 +300,7 @@ final class Factories
         }
 
         // Have to do this the hard way...
+        /** @var FileLocatorInterface */
         $locator = service('locator');
 
         // Check if the class alias was namespaced
@@ -510,6 +512,12 @@ final class Factories
 
     /**
      * Gets component data for caching.
+     *
+     * @return array{
+     *   options: array<string, bool|string|null>,
+     *   aliases: array<string, class-string>,
+     *   instances: array<class-string, object>,
+     * }
      *
      * @internal For caching only
      */

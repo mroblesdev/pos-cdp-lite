@@ -16,7 +16,7 @@ Si necesitas más características y herramientas para crecer tu negocio, te inv
 ## Requisitos
 
 - Servidor web (Apache Server 2.4 o superior).
-- PHP 7.4 o superior.
+- PHP 8.1 o superior.
   - Extensión [intl](http://php.net/manual/en/intl.requirements.php)
   - Extensión [mbstring](http://php.net/manual/en/mbstring.installation.php)
 - MySQL 5.6 o superior.
@@ -31,6 +31,8 @@ Si necesitas más características y herramientas para crecer tu negocio, te inv
 ```sh-session
 $ composer create-project mroblesdev/pos-cdp-lite
 ```
+
+> También puedes ejecutar composer create-project mroblesdev/pos-cdp-lite:v1.1.3 para PHP 7.4.
 
 #### Git
 

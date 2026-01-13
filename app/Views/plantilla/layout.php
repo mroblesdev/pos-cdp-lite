@@ -21,7 +21,7 @@
     <!-- Custom styles for this template-->
     <link href="<?= base_url('assets/jquery-ui/jquery-ui.min.css'); ?>" rel="stylesheet">
 
-    <?php $this->renderSection('style'); ?>
+    <?= $this->renderSection('style'); ?>
 
 </head>
 
@@ -52,7 +52,7 @@
         <div id="layoutSidenav_content">
             <main>
                 <div class="container-fluid px-4">
-                    <?php $this->renderSection('contenido'); ?>
+                    <?= $this->renderSection('contenido'); ?>
                 </div>
             </main>
             <footer class="py-4 bg-light mt-auto">
@@ -78,7 +78,7 @@
     <script src="<?= base_url('assets/datatables/datatables.min.js'); ?>"></script>
     <script src="<?= base_url('js/scripts.js'); ?>"></script>
 
-    <?php $this->renderSection('script'); ?>
+    <?= $this->renderSection('script'); ?>
 
 </body>
 

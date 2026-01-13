@@ -14,10 +14,10 @@ declare(strict_types=1);
 namespace CodeIgniter\Test\Mock;
 
 use CodeIgniter\CLI\InputOutput;
+use CodeIgniter\Exceptions\InvalidArgumentException;
+use CodeIgniter\Exceptions\LogicException;
 use CodeIgniter\Test\Filters\CITestStreamFilter;
 use CodeIgniter\Test\PhpStreamWrapper;
-use InvalidArgumentException;
-use LogicException;
 
 final class MockInputOutput extends InputOutput
 {
@@ -31,16 +31,14 @@ final class MockInputOutput extends InputOutput
     /**
      * Output lines.
      *
-     * @var         array<int, string>
-     * @phpstan-var list<string>
+     * @var list<string>
      */
     private array $outputs = [];
 
     /**
      * Sets user inputs.
      *
-     * @param         array<int, string> $inputs
-     * @phpstan-param list<string>       $inputs
+     * @param list<string> $inputs
      */
     public function setInputs(array $inputs): void
     {
@@ -80,6 +78,8 @@ final class MockInputOutput extends InputOutput
 
     /**
      * Returns the outputs array.
+     *
+     * @return list<string>
      */
     public function getOutputs(): array
     {
