@@ -89,7 +89,7 @@ O en Apache Server con al dirección http://localhost/pos-cdp-lite/public
 
 - **Contraseña:** admin
 
-## Características versión 1.1.2
+## Características versión 1.1.3
 
 - Acceso por credenciales
 - Catalogo de productos

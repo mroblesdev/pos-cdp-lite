@@ -15,6 +15,14 @@ $this->section('contenido');
     </div>
 <?php endif ?>
 
+<!-- Mensajes de éxito -->
+<?php if (session()->getFlashdata('success') !== null) : ?>
+    <div class="alert alert-success alert-dismissible fade show col-md-8" role="alert">
+        <?= session()->getFlashdata('success'); ?>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+<?php endif ?>
+
 <form class="g-3" method="post" action="<?= base_url('cambia-password'); ?>" autocomplete="off">
 
     <?= csrf_field(); ?>

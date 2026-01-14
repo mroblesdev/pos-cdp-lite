@@ -91,6 +91,6 @@ class Login extends BaseController
         $hash = password_hash($post['password'], PASSWORD_DEFAULT);
         $usuarioModel->update($post['id_usuario'], ['password' => $hash]);
 
-        return redirect()->back()->withInput()->with('errors', 'Contraseña actualizada correctamente.');
+        return redirect()->back()->withInput()->with('success', 'Contraseña actualizada correctamente.');
     }
 }

@@ -8,7 +8,6 @@ $this->section('contenido');
 <h4 class="mt-3">Modificar producto</h4>
 
 <!-- Mensajes de validación -->
-<!-- Mensajes de validación -->
 <?php if (session()->getFlashdata('errors') !== null) : ?>
     <div class="alert alert-danger alert-dismissible fade show col-md-6" role="alert">
         <?= session()->getFlashdata('errors'); ?>

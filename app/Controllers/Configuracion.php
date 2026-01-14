@@ -45,7 +45,6 @@ class Configuracion extends BaseController
             'tienda_direccion' => ['label' => 'dirección', 'rules' => "required"],
             'ticket_leyenda'   => ['label' => 'leyende de ticket', 'rules' => "required"],
             'ventas_folio'     => ['label' => 'folio de venta', 'rules' => "required"],
-
         ];
 
         if (!$this->validate($reglas)) {
