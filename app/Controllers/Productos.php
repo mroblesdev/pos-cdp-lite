@@ -48,10 +48,11 @@ class Productos extends BaseController
     public function create()
     {
         $reglas = [
-            'codigo' => ['label' => 'código', 'rules' => 'required|is_unique[productos.codigo]'],
-            'nombre' => 'required',
-            'precio' => 'required|greater_than[0]',
-            'existencia' => 'numeric|greater_than_equal_to[0]'
+            'codigo'        => ['label' => 'código', 'rules' => 'required|is_unique[productos.codigo]'],
+            'nombre'        => 'required',
+            'precio'        => 'required|greater_than[0]',
+            'inventariable' => 'required',
+            'existencia'    => 'numeric|greater_than_equal_to[0]'
         ];
 
         if (!$this->validate($reglas)) {
@@ -91,10 +92,11 @@ class Productos extends BaseController
         }
 
         $reglas = [
-            'codigo' => ['label' => 'código', 'rules' => "required|is_unique[productos.codigo,id,{$id}]"],
-            'nombre' => 'required',
-            'precio' => 'required|greater_than[0]',
-            'existencia' => 'numeric|greater_than_equal_to[0]'
+            'codigo'        => ['label' => 'código', 'rules' => "required|is_unique[productos.codigo,id,{$id}]"],
+            'nombre'        => 'required',
+            'precio'        => 'required|greater_than[0]',
+            'inventariable' => 'required',
+            'existencia'    => 'numeric|greater_than_equal_to[0]'
         ];
 
         if (!$this->validate($reglas)) {
