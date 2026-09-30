@@ -51,7 +51,7 @@ class Ventas extends BaseController
         $idVentaTmp = $this->request->getPost('id_venta');
 
         if (!preg_match('/^[a-zA-Z0-9.]{1,32}$/', $idVentaTmp)) {
-            return redirect()->back()->with('errors', 'Venta inválida.');
+            return redirect()->back()->with('errors', 'Venta no válida.');
         }
 
         $total = $temporalModel->totalPorVenta($idVentaTmp);
