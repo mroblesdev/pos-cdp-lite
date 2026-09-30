@@ -86,10 +86,10 @@ class Login extends BaseController
         }
 
         $usuarioModel = new UsuariosModel();
-        $post = $this->request->getPost(['id_usuario', 'password']);
+        $post = $this->request->getPost(['password']);
 
         $hash = password_hash($post['password'], PASSWORD_DEFAULT);
-        $usuarioModel->update($post['id_usuario'], ['password' => $hash]);
+        $usuarioModel->update($this->session->get('usuarioId'), ['password' => $hash]);
 
         return redirect()->back()->withInput()->with('success', 'Contraseña actualizada correctamente.');
     }

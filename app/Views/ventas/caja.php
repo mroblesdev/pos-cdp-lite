@@ -130,7 +130,7 @@ $this->section('script');
         });
 
         $("#codigo").autocomplete({
-            source: baseUrl + '/productos/autocompleteData',
+            source: `${baseUrl}/productos/autocompleteData`,
             minLength: 3,
             focus: function() {
                 return false;
@@ -152,7 +152,7 @@ $this->section('script');
         });
 
         $("#completa_venta").click(function() {
-            var nFilas = $("#tablaProductos tr").length;
+            let nFilas = $("#tablaProductos tr").length;
 
             if (nFilas < 2) {
                 $('#avisoModal').modal('show');
@@ -166,7 +166,7 @@ $this->section('script');
         })
 
         $("#completa_venta").click(function() {
-            var nFilas = $("#tablaProductos tr").length;
+            let nFilas = $("#tablaProductos tr").length;
 
             if (nFilas < 2) {
                 $('#modalito').modal('show');
@@ -188,7 +188,7 @@ $this->section('script');
     function agregarProducto(codigo, cantidad) {
         $.ajax({
             method: "POST",
-            url: baseUrl + '/caja/inserta',
+            url: `${baseUrl}/caja/inserta`,
             data: {
                 '<?= csrf_token(); ?>': '<?= csrf_hash(); ?>',
                 codigo: codigo,
@@ -215,7 +215,7 @@ $this->section('script');
     function eliminaProducto(idProducto, idVenta) {
         $.ajax({
             method: "POST",
-            url: baseUrl + '/caja/elimina',
+            url: `${baseUrl}/caja/elimina`,
             data: {
                 '<?= csrf_token(); ?>': '<?= csrf_hash(); ?>',
                 id_producto: idProducto,
@@ -225,7 +225,7 @@ $this->section('script');
                 if (response && response != "") {
                     $('#codigo').val('');
 
-                    var resultado = JSON.parse(response);
+                    let resultado = JSON.parse(response);
 
                     $("#resultado_error").html('');
                     $('#tablaProductos tbody').empty();

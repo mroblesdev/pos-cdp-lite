@@ -50,13 +50,26 @@ class Ventas extends BaseController
 
         $idVentaTmp = $this->request->getPost('id_venta');
 
+        if (!preg_match('/^[a-zA-Z0-9.]{1,32}$/', $idVentaTmp)) {
+            return redirect()->back()->with('errors', 'Venta inválida.');
+        }
+
+        $total = $temporalModel->totalPorVenta($idVentaTmp);
+
+        if ($total <= 0) {
+            return redirect()->back()->with('errors', 'No se puede registrar una venta sin productos.');
+        }
+
         $datos = [
             'folio' => str_pad($configModel->ultimoFolio(), 10, 0, STR_PAD_LEFT),
-            'total' => preg_replace('/[\$,]/', '', $this->request->getPost('total')),
+            'total' => $total,
             'fecha' => date('Y-m-d H:i:s'),
             'usuario_id' => $this->session->get('usuarioId'),
             'activo' => 1
         ];
+
+        $db = db_connect();
+        $db->transStart();
 
         $idVenta = $this->ventasModel->insert($datos);
 
@@ -81,13 +94,19 @@ class Ventas extends BaseController
 
                 $datosProducto = $productosModel->find($productoTmp['id_producto']);
 
-                if ($datosProducto['inventariable'] == 1) {
+                if ($datosProducto && $datosProducto['inventariable'] == 1) {
                     $productosModel->actualizaStock($productoTmp['id_producto'], $productoTmp['cantidad'], '-');
                 }
             }
+
+            $temporalModel->eliminaVenta($idVentaTmp);
         }
 
-        $temporalModel->eliminaVenta($idVentaTmp);
+        $db->transComplete();
+
+        if (!$idVenta || !$db->transStatus()) {
+            return redirect()->back()->with('errors', 'No se pudo registrar la venta. Intenta de nuevo.');
+        }
 
         return redirect()->to(base_url('ventas/muestraTicket/' . $idVenta));
     }
@@ -118,6 +137,11 @@ class Ventas extends BaseController
         }
 
         $datosVenta   = $this->ventasModel->find($idVenta);
+
+        if (!$datosVenta) {
+            return view('ventas/mensaje', ['mensaje' => 'No se encontró información.']);
+        }
+
         $detalleVenta = $detalleVentasModel->where('venta_id', $idVenta)->findAll();
 
         $pdf = new Fpdf('P', 'mm', array(80, 250));
@@ -205,7 +229,7 @@ class Ventas extends BaseController
 
         foreach ($detalleVenta as $productoTmp) {
             $datosProducto = $productosModel->where('id', $productoTmp['producto_id'])->first();
-            if ($datosProducto['inventariable'] == 1) {
+            if ($datosProducto && $datosProducto['inventariable'] == 1) {
                 $productosModel->actualizaStock($productoTmp['producto_id'], $productoTmp['cantidad'], '+');
             }
         }

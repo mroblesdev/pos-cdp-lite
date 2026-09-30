@@ -43,6 +43,10 @@ class Reportes extends BaseController
 
     public function generaVentas($inicio, $fin, $estaus)
     {
+        if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $inicio) || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $fin) || !is_numeric($estaus)) {
+            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+        }
+
         $ventasModel = new VentasModel();
         $ventas = $ventasModel->ventasRango($inicio, $fin, $estaus);
 

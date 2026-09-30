@@ -44,8 +44,9 @@ class VentasModel extends Model
     {
         $query = $this->select('fecha_alta, folio, total')
             ->table('v_ventas')
-            ->where("activo = $activo")
-            ->where("DATE(fecha_alta) BETWEEN '$fechaInicio' AND '$fechaFin'")
+            ->where('activo', $activo)
+            ->where('DATE(fecha_alta) >=', $fechaInicio)
+            ->where('DATE(fecha_alta) <=', $fechaFin)
             ->orderBy('fecha_alta DESC')
             ->get();
         return $query->getResultArray();
@@ -53,8 +54,7 @@ class VentasModel extends Model
 
     public function totalVentasDia($fecha)
     {
-        $where = "activo = 1 AND DATE(fecha) = '$fecha'";
         $this->select("IFNULL(sum(total), 0) AS total");
-        return $this->where($where)->first();
+        return $this->where('activo', 1)->where('DATE(fecha)', $fecha)->first();
     }
 }

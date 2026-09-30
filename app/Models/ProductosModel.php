@@ -58,9 +58,16 @@ class ProductosModel extends Model
     // Actualiza existencia del producto
     public function actualizaStock($idProducto, $cantidad, $operador = '+')
     {
-        $this->where('id', $idProducto)
-            ->set('existencia', "existencia $operador $cantidad", false)
-            ->update();
+        $cantidad = (float) $cantidad;
+
+        $builder = $this->where('id', $idProducto)
+            ->set('existencia', "existencia $operador $cantidad", false);
+
+        if ($operador === '-') {
+            $builder->where('existencia >=', $cantidad);
+        }
+
+        $builder->update();
     }
 
     /**

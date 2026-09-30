@@ -35,7 +35,7 @@ $this->section('contenido');
 
 <a href="https://codigosdeprogramacion.com/2021/09/02/sistema-de-punto-de-venta-cdp-3" class="btn btn-primary" target="_blank">Obtén más información</a>
 
-<a href="https://pos.codigosdeprogramacion.com" class="btn btn-success" target="_blank">Probar versión Pro</a>
+<a href="https://pos.sistemarv.com" class="btn btn-success" target="_blank">Probar versión Pro</a>
 
 <?php
 $this->endSection();

@@ -13,8 +13,8 @@ $routes->post('login', 'Login::login');
 $routes->get('logout', 'Login::logout');
 
 // Dashboard
-$routes->get('inicio', 'Inicio::index');
-$routes->get('premium', 'Inicio::premium');
+$routes->get('inicio', 'Inicio::index', ["filter" => "auth"]);
+$routes->get('premium', 'Inicio::premium', ["filter" => "auth"]);
 
 // Productos
 $routes->resource('productos', ['placeholder' => '(:num)', 'except' => 'show', "filter" => "auth"]);

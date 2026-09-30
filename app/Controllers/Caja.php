@@ -35,12 +35,18 @@ class Caja extends BaseController
         $cantidad = $this->request->getPost('cantidad');
         $idVenta  = $this->request->getPost('id_venta');
 
+        if (!$this->esIdVentaValido($idVenta)) {
+            return;
+        }
+
         $productosModel = new ProductosModel();
         $temporalModel = new TemporalCajaModel();
 
         $producto = $productosModel->where(['codigo' => $codigo, 'activo' => 1])->first();
 
-        if (!$producto) {
+        if (!is_numeric($cantidad) || $cantidad <= 0) {
+            $error = 'Cantidad no válida';
+        } elseif (!$producto) {
             $error = 'No existe el producto';
         } else {
             $idProducto = $producto['id'];
@@ -94,6 +100,10 @@ class Caja extends BaseController
         $idProducto = $this->request->getPost('id_producto');
         $idVenta = $this->request->getPost('id_venta');
 
+        if (!$this->esIdVentaValido($idVenta)) {
+            return;
+        }
+
         $productoVenta = $temporalModel->where(['id_venta' => $idVenta, 'id_producto' => $idProducto])->first();
 
         if ($productoVenta) {
@@ -133,9 +143,15 @@ class Caja extends BaseController
             $fila .= "<td>" . $row['precio'] . "</td>";
             $fila .= "<td>" . $row['cantidad'] . "</td>";
             $fila .= "<td>" . $row['importe'] . "</td>";
-            $fila .= "<td><a onclick=\"eliminaProducto(" . $row['id_producto'] . ", '" . $row['id_venta'] . "')\" class='borrar'><span class='fas fa-fw fa-trash'></span></a></td>";
+            $fila .= "<td><a onclick=\"eliminaProducto(" . $row['id_producto'] . ", '" . esc($row['id_venta'], 'js') . "')\" class='borrar'><span class='fas fa-fw fa-trash'></span></a></td>";
             $fila .= "</tr>";
         }
         return $fila;
+    }
+
+    // Valida que el id de venta temporal tenga el formato esperado
+    private function esIdVentaValido($idVenta)
+    {
+        return is_string($idVenta) && preg_match('/^[a-zA-Z0-9.]{1,32}$/', $idVenta) === 1;
     }
 }
