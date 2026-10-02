@@ -68,6 +68,8 @@ class ProductosModel extends Model
         }
 
         $builder->update();
+
+        return $this->db->affectedRows() > 0;
     }
 
     /**

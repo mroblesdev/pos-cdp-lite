@@ -42,12 +42,12 @@ class VentasModel extends Model
     // Consulta ventas por fechas
     public function ventasRango($fechaInicio, $fechaFin, $activo = 1)
     {
-        $query = $this->select('fecha_alta, folio, total')
+        $query = $this->select('fecha, folio, total')
             ->table('v_ventas')
             ->where('activo', $activo)
-            ->where('DATE(fecha_alta) >=', $fechaInicio)
-            ->where('DATE(fecha_alta) <=', $fechaFin)
-            ->orderBy('fecha_alta DESC')
+            ->where('DATE(fecha) >=', $fechaInicio)
+            ->where('DATE(fecha) <=', $fechaFin)
+            ->orderBy('fecha DESC')
             ->get();
         return $query->getResultArray();
     }
@@ -55,6 +55,6 @@ class VentasModel extends Model
     public function totalVentasDia($fecha)
     {
         $this->select("IFNULL(sum(total), 0) AS total");
-        return $this->where('activo', 1)->where('DATE(fecha)', $fecha)->first();
+        return $this->where('activo', 1)->where('DATE(fecha)', $fecha)->get()->getRowArray();
     }
 }

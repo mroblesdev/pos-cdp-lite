@@ -50,7 +50,7 @@ class Ventas extends BaseController
 
         $idVentaTmp = $this->request->getPost('id_venta');
 
-        if (!preg_match('/^[a-zA-Z0-9.]{1,32}$/', $idVentaTmp)) {
+        if (!preg_match('/^[a-zA-Z0-9.]{1,32}$/', (string) $idVentaTmp)) {
             return redirect()->back()->with('errors', 'Venta no válida.');
         }
 
@@ -60,6 +60,9 @@ class Ventas extends BaseController
             return redirect()->back()->with('errors', 'No se puede registrar una venta sin productos.');
         }
 
+        $db = db_connect();
+        $db->transStart();
+
         $datos = [
             'folio' => str_pad($configModel->ultimoFolio(), 10, 0, STR_PAD_LEFT),
             'total' => $total,
@@ -67,9 +70,6 @@ class Ventas extends BaseController
             'usuario_id' => $this->session->get('usuarioId'),
             'activo' => 1
         ];
-
-        $db = db_connect();
-        $db->transStart();
 
         $idVenta = $this->ventasModel->insert($datos);
 
@@ -95,7 +95,10 @@ class Ventas extends BaseController
                 $datosProducto = $productosModel->find($productoTmp['id_producto']);
 
                 if ($datosProducto && $datosProducto['inventariable'] == 1) {
-                    $productosModel->actualizaStock($productoTmp['id_producto'], $productoTmp['cantidad'], '-');
+                    if (!$productosModel->actualizaStock($productoTmp['id_producto'], $productoTmp['cantidad'], '-')) {
+                        $db->transRollback();
+                        return redirect()->back()->with('errors', 'No hay suficientes existencias de ' . esc($productoTmp['nombre']) . '.');
+                    }
                 }
             }
 
@@ -220,6 +223,16 @@ class Ventas extends BaseController
     // Cancela venta
     public function cancelar($id)
     {
+        $venta = $this->ventasModel->find($id);
+
+        // Evita reingresar el stock dos veces si la venta ya está cancelada
+        if (!$venta || $venta['activo'] == 0) {
+            return redirect()->to(base_url('ventas'));
+        }
+
+        $db = db_connect();
+        $db->transStart();
+
         $this->ventasModel->update($id, ['activo' => 0]);
 
         $detalleVentasModel = new DetalleVentasModel();
@@ -233,6 +246,8 @@ class Ventas extends BaseController
                 $productosModel->actualizaStock($productoTmp['producto_id'], $productoTmp['cantidad'], '+');
             }
         }
+
+        $db->transComplete();
 
         return redirect()->to(base_url('ventas'));
     }

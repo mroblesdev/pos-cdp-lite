@@ -50,9 +50,9 @@ class Productos extends BaseController
         $reglas = [
             'codigo'        => ['label' => 'código', 'rules' => 'required|is_unique[productos.codigo]'],
             'nombre'        => 'required',
-            'precio'        => 'required|greater_than[0]',
-            'inventariable' => 'required',
-            'existencia'    => 'numeric|greater_than_equal_to[0]'
+            'precio'        => 'required|greater_than[0]|less_than_equal_to[99999999.99]',
+            'inventariable' => 'required|in_list[0,1]',
+            'existencia'    => 'numeric|greater_than_equal_to[0]|less_than_equal_to[32767]'
         ];
 
         if (!$this->validate($reglas)) {
@@ -81,6 +81,11 @@ class Productos extends BaseController
         }
 
         $producto = $this->productosModel->find($id);
+
+        if (!$producto) {
+            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+        }
+
         return view('productos/edit', ['producto' => $producto]);
     }
 
@@ -94,9 +99,9 @@ class Productos extends BaseController
         $reglas = [
             'codigo'        => ['label' => 'código', 'rules' => "required|is_unique[productos.codigo,id,{$id}]"],
             'nombre'        => 'required',
-            'precio'        => 'required|greater_than[0]',
-            'inventariable' => 'required',
-            'existencia'    => 'numeric|greater_than_equal_to[0]'
+            'precio'        => 'required|greater_than[0]|less_than_equal_to[99999999.99]',
+            'inventariable' => 'required|in_list[0,1]',
+            'existencia'    => 'numeric|greater_than_equal_to[0]|less_than_equal_to[32767]'
         ];
 
         if (!$this->validate($reglas)) {
@@ -145,7 +150,7 @@ class Productos extends BaseController
     {
         $resultado = array();
 
-        $valor = $this->request->getGet('term');
+        $valor = (string) $this->request->getGet('term');
 
         $productos = $this->productosModel->buscarPorCodigoNombre($valor);
         if (!empty($productos)) {

@@ -36,7 +36,7 @@
         <ul class="navbar-nav d-none d-md-inline-block ms-auto me-0 me-md-3 my-2 my-md-0">
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="fas fa-user fa-fw"></i> <?= $_SESSION['usuarioNombre']; ?>
+                    <i class="fas fa-user fa-fw"></i> <?= esc($_SESSION['usuarioNombre']); ?>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                     <li><a class="dropdown-item" href="<?= base_url('cambia-password'); ?>">Cambiar contraseña</a></li>

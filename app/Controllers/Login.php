@@ -56,6 +56,7 @@ class Login extends BaseController
             'usuarioNombre' => $usuarioData['nombre'],
         ];
 
+        $this->session->regenerate(true);
         $this->session->set($sesionData);
     }
 

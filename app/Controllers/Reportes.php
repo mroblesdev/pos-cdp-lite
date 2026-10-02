@@ -74,7 +74,7 @@ class Reportes extends BaseController
         foreach ($ventas as $venta) {
             $pdf->row(
                 [
-                    $this->ordenarFechaHora($venta['fecha_alta']),
+                    $this->ordenarFechaHora($venta['fecha']),
                     $venta['folio'],
                     '$ ' . number_format($venta['total'], 2, '.', ',')
                 ]

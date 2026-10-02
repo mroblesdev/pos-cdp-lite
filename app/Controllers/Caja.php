@@ -44,7 +44,9 @@ class Caja extends BaseController
 
         $producto = $productosModel->where(['codigo' => $codigo, 'activo' => 1])->first();
 
-        if (!is_numeric($cantidad) || $cantidad <= 0) {
+        $cantidad = filter_var($cantidad, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1, 'max_range' => 32767]]);
+
+        if ($cantidad === false) {
             $error = 'Cantidad no válida';
         } elseif (!$producto) {
             $error = 'No existe el producto';
@@ -59,7 +61,9 @@ class Caja extends BaseController
             $productoVenta = $temporalModel->where(['id_venta' => $idVenta, 'id_producto' => $idProducto])->first();
             $cantidad += $productoVenta ? $productoVenta['cantidad'] : 0;
 
-            if ($productoInventariable == 1 && $productoExistencia < $cantidad) {
+            if ($cantidad > 32767 || $cantidad * $productoPrecioVenta > 99999999.99) {
+                $error = 'Cantidad no válida';
+            } elseif ($productoInventariable == 1 && $productoExistencia < $cantidad) {
                 $error = 'No hay suficientes existencias';
             } else {
                 $subtotal = $cantidad * $productoPrecioVenta;

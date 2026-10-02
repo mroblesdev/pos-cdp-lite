@@ -39,9 +39,8 @@ class ConfiguracionModel extends Model
     // Consulta ultimo folio
     public function ultimoFolio()
     {
-        $resultado = $this->select('valor')
-            ->where('nombre', 'ventas_folio')
-            ->get();
+        // FOR UPDATE: bloquea la fila hasta cerrar la transacción (llamar dentro de una)
+        $resultado = $this->db->query("SELECT valor FROM configuracion WHERE nombre = 'ventas_folio' FOR UPDATE");
 
         if ($resultado->getNumRows() > 0) {
             return $resultado->getRowArray()['valor'];
