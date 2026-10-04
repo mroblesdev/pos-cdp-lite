@@ -48,8 +48,8 @@ class Productos extends BaseController
     public function create()
     {
         $reglas = [
-            'codigo'        => ['label' => 'código', 'rules' => 'required|is_unique[productos.codigo]'],
-            'nombre'        => 'required',
+            'codigo'        => ['label' => 'código', 'rules' => 'required|max_length[20]|is_unique[productos.codigo]'],
+            'nombre'        => 'required|max_length[200]',
             'precio'        => 'required|greater_than[0]|less_than_equal_to[99999999.99]',
             'inventariable' => 'required|in_list[0,1]',
             'existencia'    => 'numeric|greater_than_equal_to[0]|less_than_equal_to[32767]'
@@ -97,8 +97,8 @@ class Productos extends BaseController
         }
 
         $reglas = [
-            'codigo'        => ['label' => 'código', 'rules' => "required|is_unique[productos.codigo,id,{$id}]"],
-            'nombre'        => 'required',
+            'codigo'        => ['label' => 'código', 'rules' => "required|max_length[20]|is_unique[productos.codigo,id,{$id}]"],
+            'nombre'        => 'required|max_length[200]',
             'precio'        => 'required|greater_than[0]|less_than_equal_to[99999999.99]',
             'inventariable' => 'required|in_list[0,1]',
             'existencia'    => 'numeric|greater_than_equal_to[0]|less_than_equal_to[32767]'
