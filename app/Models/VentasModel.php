@@ -57,4 +57,29 @@ class VentasModel extends Model
         $this->select("IFNULL(sum(total), 0) AS total");
         return $this->where('activo', 1)->where('DATE(fecha)', $fecha)->get()->getRowArray();
     }
+
+    // Total y número de ventas activas en un rango de fechas
+    public function totalVentasRango($fechaInicio, $fechaFin)
+    {
+        $this->select('IFNULL(SUM(total), 0) AS total, COUNT(*) AS tickets');
+        return $this->where('activo', 1)
+            ->where('DATE(fecha) >=', $fechaInicio)
+            ->where('DATE(fecha) <=', $fechaFin)
+            ->get()
+            ->getRowArray();
+    }
+
+    // Total vendido por día en un rango de fechas (solo días con ventas), indexado por fecha
+    public function totalesPorDia($fechaInicio, $fechaFin)
+    {
+        $filas = $this->select('DATE(fecha) AS dia, SUM(total) AS total')
+            ->where('activo', 1)
+            ->where('DATE(fecha) >=', $fechaInicio)
+            ->where('DATE(fecha) <=', $fechaFin)
+            ->groupBy('DATE(fecha)')
+            ->get()
+            ->getResultArray();
+
+        return array_column($filas, 'total', 'dia');
+    }
 }

@@ -29,4 +29,17 @@ class DetalleVentasModel extends Model
     // Dates
     protected $useTimestamps = false;
 
+    // Productos más vendidos en ventas activas (piezas e importe)
+    public function productosMasVendidos($limite = 5)
+    {
+        return $this->select('detalle_ventas.producto_id, MAX(detalle_ventas.nombre) AS nombre, SUM(detalle_ventas.cantidad) AS cantidad, SUM(detalle_ventas.cantidad * detalle_ventas.precio) AS importe')
+            ->join('ventas', 'ventas.id = detalle_ventas.venta_id')
+            ->where('ventas.activo', 1)
+            ->groupBy('detalle_ventas.producto_id')
+            ->orderBy('cantidad', 'DESC')
+            ->orderBy('importe', 'DESC')
+            ->limit($limite)
+            ->get()
+            ->getResultArray();
+    }
 }

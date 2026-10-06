@@ -92,4 +92,13 @@ class ProductosModel extends Model
 
         return $query->getResultArray();
     }
+
+    // Número de productos inventariables activos con existencia igual o menor al umbral
+    public function totalExistenciasBajas($umbral = 10)
+    {
+        return $this->where('activo', 1)
+            ->where('inventariable', 1)
+            ->where('existencia <=', $umbral)
+            ->countAllResults();
+    }
 }
