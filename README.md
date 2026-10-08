@@ -1,6 +1,44 @@
 # Sistema de Punto de Venta CDP Lite
 
+![Licencia MIT](https://img.shields.io/badge/licencia-MIT-green)
+![PHP 8.1+](https://img.shields.io/badge/PHP-8.1%2B-777BB4?logo=php&logoColor=white)
+![CodeIgniter 4](https://img.shields.io/badge/CodeIgniter-4-EF4223?logo=codeigniter&logoColor=white)
+
 El sistema de punto de venta CDP Lite es una aplicación web de código abierto basada en PHP y MySQL para gestionar las ventas en tu tienda. Este proyecto fue desarrollado utilizando CodeIgniter 4.
+
+🔎 **Pruébalo en línea:** https://pos-lite.sistemarv.com
+
+## Capturas de pantalla
+
+| | |
+| --- | --- |
+| ![Inicio de sesión](public/images/capturas/1-Login.jpg)<br>**Inicio de sesión** | ![Dashboard](public/images/capturas/2-Dashboard.png)<br>**Dashboard** |
+| ![Caja](public/images/capturas/3-Caja.png)<br>**Caja de cobro** | ![Ticket](public/images/capturas/4-Ticket.png)<br>**Ticket de venta** |
+| ![Productos](public/images/capturas/5-Productos.png)<br>**Catálogo de productos** | ![Reporte](public/images/capturas/6-Reporte.png)<br>**Reportes** |
+
+## Características versión 1.1.5
+
+- Acceso por credenciales
+- Dashboard
+  - Ventas del día y del mes
+  - Gráfica de ventas de los últimos 7 días
+  - Productos más vendidos
+  - Aviso de productos con poco stock
+- Catálogo de productos
+  - Productos con o sin control de inventario
+  - Búsqueda por código de barras o nombre con autocompletado
+- Caja de cobro
+  - Control de existencias: se descuentan al vender y se restituyen al cancelar
+- Generación de ticket
+- Historial de ventas
+  - Reimpresión de ticket
+  - Cancelar ventas
+- Reportes
+  - Ventas
+  - Productos
+- Configuración del sistema
+  - Datos de la tienda, leyenda del ticket y folio de ventas
+  - Cambio de contraseña
 
 ### 🚀 ¿Buscas más funcionalidades?
 
@@ -66,6 +104,15 @@ database.default.password = password
 database.default.DBDriver = MySQLi
 ```
 
+- Si vas a usar el sistema en un servidor de producción, descomenta y establece también `CI_ENVIRONMENT = production` en el `.env`. En el modo `development` se muestran errores detallados y la barra de depuración.
+
+- Asegúrate de que el servidor web pueda escribir en la carpeta `writable/` (sesiones, caché y registros). Si ves errores de permisos al iniciar sesión, ejecuta (ajusta el usuario según tu servidor, por ejemplo `www-data` en Debian/Ubuntu):
+
+```sh-session
+$ sudo chown -R www-data:www-data writable
+$ sudo chmod -R 775 writable
+```
+
 ### 3. Ejecutar migraciones y seeders:
 ```
 php spark migrate
@@ -77,13 +124,20 @@ Al importar el archivo SQL, se crearán las tablas necesarias y se cargarán los
 
 
 ### 4. Ejecutar la aplicación:
+
+#### Servidor integrado
+
 ```
 php spark serve
-``` 
+```
 
-Esto iniciará el servidor en http://localhost:8080 por defecto.
+Esto iniciará el servidor en http://localhost:8080 por defecto. Recuerda ajustar `app.baseURL` en el `.env` a esa dirección.
 
-O en Apache Server con al dirección http://localhost/pos-cdp-lite/public
+#### Apache Server
+
+Con Apache, abre la dirección de la carpeta `public`, por ejemplo http://localhost/pos-cdp-lite/public
+
+### 5. Iniciar sesión
 
 **Datos de acceso**
 
@@ -91,31 +145,7 @@ O en Apache Server con al dirección http://localhost/pos-cdp-lite/public
 
 - **Contraseña:** admin
 
-## Características versión 1.1.3
-
-- Acceso por credenciales
-- Catalogo de productos
-- Caja de cobro
-- Generación de ticket
-- Historial de ventas
-  - Reimpresión de ticket
-  - Cancelar ventas
-- Reportes
-  - Ventas
-  - Productos
-- Configuración del sistema
-
-## Demostración
-
-Para acceder a nuestra demostración y explorar todas las funcionalidades del Punto de Venta CDP Lite, por favor visita https://pos-lite.sistemarv.com
-
-
-## Capturas de pantalla
-
-| ![Inicio de sesión](public/images/capturas/1-Login.png)  |  ![Dashboard](public/images/capturas/2-Dasdboard.png)
-| --- | --- |
-| ![Caja](public/images/capturas/3-Caja.png)  |  ![Ticket](public/images/capturas/4-Ticket.png)
-| ![Productos](public/images/capturas/5-Productos.png)  |  ![Reporte](public/images/capturas/6-Reporte.png)
+> ⚠️ **Cambia la contraseña después de tu primer acceso** desde el menú del usuario (*Cambiar contraseña*), sobre todo si el sistema estará disponible en internet.
 
 ## Contribuciones
 
